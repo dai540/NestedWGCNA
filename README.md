@@ -2,17 +2,28 @@
 
 [![pkgdown](https://img.shields.io/badge/docs-pkgdown-315c86)](https://dai540.github.io/NestedWGCNA/)
 [![R-CMD-check](https://github.com/dai540/NestedWGCNA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dai540/NestedWGCNA/actions/workflows/R-CMD-check.yaml)
-[![pkgdown deploy](https://github.com/dai540/NestedWGCNA/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/dai540/NestedWGCNA/actions/workflows/pkgdown.yaml)
+[![GitHub release](https://img.shields.io/github/v/release/dai540/NestedWGCNA)](https://github.com/dai540/NestedWGCNA/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-`NestedWGCNA` is an R package for two-stage gene co-expression analysis:
-
-- Stage 1: discover coarse-grained modules (CGMs)
-- Stage 2: normalize by CGM core genes (GenFocus) and discover fine-grained modules (FGMs)
+`NestedWGCNA` is an R package for two-stage gene co-expression network analysis.
+It provides an end-to-end workflow to discover coarse-grained modules (CGMs),
+normalize within selected module cores (GenFocus), and discover fine-grained
+modules (FGMs):
 
 <https://dai540.github.io/NestedWGCNA/>
 
-This package is a full R implementation. The prior Python implementation is not used at runtime.
+- `find_cgm()` for coarse-grained module discovery
+- `genfocus_normalize()` for core-based normalization
+- `find_fgm()` for fine-grained module discovery in a selected CGM
+
+The package is intentionally focused. It does not implement raw-count
+normalization or heavy downstream clinical modeling. Instead, it standardizes
+the two-stage network workflow, result objects, case-study outputs, and
+reproducible tutorials.
+
+It is designed for analysts working with expression matrices in
+`samples/cells x genes` format, especially bulk RNA-seq and pseudobulk-style
+inputs.
 
 ## Installation
 
@@ -30,34 +41,63 @@ install.packages("remotes")
 remotes::install_github("dai540/NestedWGCNA")
 ```
 
-Then load:
+Or install from a source tarball:
+
+```r
+install.packages("path/to/NestedWGCNA_<version>.tar.gz", repos = NULL, type = "source")
+```
+
+Then load the package:
 
 ```r
 library(NestedWGCNA)
 ```
 
-Core clustering backends:
+Optional dependencies for clustering and tutorials:
 
 ```r
 install.packages(c("uwot", "dbscan", "matrixStats"))
+BiocManager::install(c("ALL", "bladderbatch", "Biobase"))
 ```
+
+## Citation
+
+If you use `NestedWGCNA`, cite the package as:
+
+> Dai (2026). *NestedWGCNA: Two-Stage Gene Co-Expression Network Analysis*. R package.
+> <https://dai540.github.io/NestedWGCNA/>
+
+You can also retrieve the citation from R:
+
+```r
+citation("NestedWGCNA")
+```
+
+## Documentation
+
+<https://dai540.github.io/NestedWGCNA/>
 
 ## What NestedWGCNA does
 
-`NestedWGCNA` standardizes:
+`NestedWGCNA` does four things.
 
-- adjacency and dissimilarity calculation with explicit mode control
-- CGM discovery with UMAP + HDBSCAN
-- core decomposition and core erosion
-- GenFocus normalization
-- nested CGM -> FGM workflow
-- module score calculation
-- case-study runner with enrichment and phenotype association outputs
+- Computes adjacency/dissimilarity matrices with explicit reproducibility modes
+- Discovers CGMs and core genes using UMAP + HDBSCAN + core decomposition
+- Runs nested FGM discovery with GenFocus-aware fallback behavior
+- Exports standardized case-study tables, enrichment results, and figures
 
-The package provides two main method modes:
+In practice, the package is doing this:
 
-- `mode = "paper"`: adjacency \(r^2\), dissimilarity \(\sqrt{1-r^2}\)
-- `mode = "python_compat"`: adjacency \(|r|\), dissimilarity \(\sqrt{1-|r|}\)
+- `compute_adjacency()` and `compute_dissimilarity()` define the network space
+- `find_cgm()` finds CGMs and core assignments
+- `find_fgm()` and `run_nested_wgcna()` run stage-2 decomposition
+- `module_score()` computes per-sample module scores
+- `run_case_study()` generates reproducible real-data outputs
+
+The package supports two main method modes:
+
+- `mode = "paper"`: adjacency `r^2`, dissimilarity `sqrt(1 - r^2)`
+- `mode = "python_compat"`: adjacency `|r|`, dissimilarity `sqrt(1 - |r|)`
 
 ## Main functions
 
@@ -68,13 +108,31 @@ The package provides two main method modes:
 - `compute_adjacency()`
 - `compute_dissimilarity()`
 - `run_case_study()`
+- `module_score()`
 - `available_case_studies()`
 - `case_study_summary()`
 - `case_study_table()`
 
-## Quick example
+## Stable outputs
+
+Each case study generates a stable output layout:
+
+- `summary.json`
+- `cgm_assignments.tsv`
+- `fgm_assignments.tsv`
+- `cgm_scores.tsv`
+- `fgm_scores.tsv`
+- `cgm_enrichment.tsv`
+- `fgm_enrichment.tsv`
+- `phenotype_associations.tsv`
+- `cgm_module_sizes.png`
+- `fgm_module_sizes.png`
+
+## Example
 
 ```r
+library(NestedWGCNA)
+
 set.seed(42)
 expr <- matrix(
   abs(rnorm(80 * 500)),
@@ -92,67 +150,41 @@ res <- run_nested_wgcna(
   seed = 42
 )
 
-names(res$module_scores)
+summary(res)
 ```
 
-## Real-data tutorials (multiple datasets)
+## Tutorials
 
-Each tutorial uses downloaded real data and includes background, objective, methods, results, discussion, and interpretation.
+The tutorial site is organized around:
 
-1. TCGA-BLCA bulk RNA-seq:
+- package article (method and API)
+- TCGA-BLCA case study
+- ALL leukemia case study
+- bladderbatch case study
+
+Run the real-data tutorial pipelines:
+
 ```r
 system("Rscript inst/scripts/run_tcga_blca_case_study.R")
-```
-2. Bioconductor ALL leukemia:
-```r
 system("Rscript inst/scripts/run_all_leukemia_case_study.R")
-```
-3. Bioconductor bladderbatch:
-```r
 system("Rscript inst/scripts/run_bladderbatch_case_study.R")
 ```
 
-Outputs are written under:
+## What NestedWGCNA cannot do yet
 
-- `inst/extdata/case_studies/tcga_blca/`
-- `inst/extdata/case_studies/all_leukemia/`
-- `inst/extdata/case_studies/bladderbatch/`
+- It does not perform raw-count normalization or alignment/quantification
+- It does not guarantee exact UMAP/HDBSCAN label identity across environments
+- It does not include heavy downstream survival/response modeling workflows
+- It does not include controlled-access cohort bundles
 
-Each case-study directory contains:
+## Package layout
 
-- `summary.json`
-- `cgm_assignments.tsv`
-- `fgm_assignments.tsv`
-- `cgm_scores.tsv`
-- `fgm_scores.tsv`
-- `cgm_enrichment.tsv`
-- `fgm_enrichment.tsv`
-- `phenotype_associations.tsv`
-- `cgm_module_sizes.png`
-- `fgm_module_sizes.png`
-
-## Documentation
-
-Main pkgdown articles:
-
-- package article
-- tutorial: TCGA-BLCA
-- tutorial: ALL leukemia
-- tutorial: bladderbatch
-
-Build docs locally:
-
-```r
-pkgdown::build_site()
-```
-
-## Author
-
-- Dai
-
-## Citation
-
-If you use `NestedWGCNA`, cite:
-
-> Dai (2026). *NestedWGCNA: Two-Stage Gene Co-Expression Network Analysis*. R package.
-> <https://dai540.github.io/NestedWGCNA/>
+- `R/preprocess.R`: input validation and filtering helpers
+- `R/adjacency.R`: adjacency computation
+- `R/dissimilarity.R`: dissimilarity computation
+- `R/clustering.R`: UMAP/HDBSCAN wrappers and CGM discovery
+- `R/genfocus.R`: GenFocus normalization
+- `R/pipeline.R`: nested workflow and scoring
+- `R/case_study_pipeline.R`: real-data case-study runner
+- `vignettes/`: package article and real-data tutorials
+- `inst/extdata/case_studies/`: bundled case-study outputs

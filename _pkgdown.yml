@@ -9,7 +9,7 @@ url: https://dai540.github.io/NestedWGCNA/
 
 home:
   title: NestedWGCNA
-  description: Two-stage gene co-expression network analysis in R.
+  description: Two-stage gene co-expression network analysis in R for coarse-grained and fine-grained module discovery.
   sidebar:
     structure: []
 
@@ -37,19 +37,19 @@ navbar:
       aria-label: GitHub repository
 
 articles:
-  - title: Core
+  - title: Core tutorials
     navbar: Core
     contents:
       - package-article
-  - title: Real-data tutorials
-    navbar: Tutorials
+  - title: Real-data case studies
+    navbar: Case Studies
     contents:
       - tutorial-tcga-blca
       - tutorial-all-leukemia
       - tutorial-bladderbatch
 
 reference:
-  - title: Core workflow
+  - title: Core workflows
     contents:
       - NestedWGCNA-package
       - run_nested_wgcna
@@ -67,7 +67,7 @@ reference:
       - run_gene_hdbscan
       - core_decompose_weighted
       - erode_to_core
-  - title: Input helpers
+  - title: Input and output helpers
     contents:
       - as_expression_matrix
       - clear_data

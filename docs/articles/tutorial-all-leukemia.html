@@ -346,30 +346,303 @@ established, use direct FGM clustering on the CGM matrix.</li>
 </tr>
 </tbody>
 </table>
+<div class="section level3">
+<h3 id="network-diagram">Network diagram<a class="anchor" aria-label="anchor" href="#network-diagram"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu">graphics</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">1.5</span>, <span class="fl">2.8</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">plot_module_corr_network</span><span class="op">(</span><span class="va">cgm_scores</span>, layer <span class="op">=</span> <span class="st">"CGM"</span>, top_n <span class="op">=</span> <span class="fl">12</span>, cor_thr <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
+<span><span class="fu">plot_module_corr_network</span><span class="op">(</span><span class="va">fgm_scores</span>, layer <span class="op">=</span> <span class="st">"FGM"</span>, top_n <span class="op">=</span> <span class="fl">12</span>, cor_thr <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="tutorial-all-leukemia_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Module-score correlation networks in ALL (CGM and FGM layers)" width="700"><p class="caption">
+Module-score correlation networks in ALL (CGM and FGM layers)
+</p>
+</div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">graphics</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="quantitative-readout-and-objective-match">Quantitative readout and objective match<a class="anchor" aria-label="anchor" href="#quantitative-readout-and-objective-match"></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">cgm_assign</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">cgm_assign</span><span class="op">$</span><span class="va">cgm</span><span class="op">[</span><span class="va">cgm_assign</span><span class="op">$</span><span class="va">cgm</span> <span class="op">&gt;=</span> <span class="fl">0</span><span class="op">]</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>cgm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span>, genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">size_tbl</span>, <span class="fl">7</span><span class="op">)</span>, caption <span class="op">=</span> <span class="st">"Largest CGMs by gene count"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<table class="table">
+<caption>Largest CGMs by gene count</caption>
+<thead><tr class="header">
+<th align="left">cgm</th>
+<th align="right">genes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="right">170</td>
+</tr>
+<tr class="even">
+<td align="left">7</td>
+<td align="right">72</td>
+</tr>
+<tr class="odd">
+<td align="left">0</td>
+<td align="right">70</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="right">60</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="right">44</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="right">31</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="right">30</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">fgm_assign</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">fgm_assign</span><span class="op">$</span><span class="va">fgm</span><span class="op">[</span><span class="va">fgm_assign</span><span class="op">$</span><span class="va">fgm</span> <span class="op">&gt;=</span> <span class="fl">0</span><span class="op">]</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>fgm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span>, genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">size_tbl</span>, <span class="fl">7</span><span class="op">)</span>, caption <span class="op">=</span> <span class="st">"Largest FGMs by gene count"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<table class="table">
+<caption>Largest FGMs by gene count</caption>
+<thead><tr class="header">
+<th align="left">fgm</th>
+<th align="right">genes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">6</td>
+<td align="right">35</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="right">27</td>
+</tr>
+<tr class="odd">
+<td align="left">7</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">5</td>
+<td align="right">13</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="right">9</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">assoc</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">assoc</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">layer_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">assoc</span>, <span class="va">assoc</span><span class="op">$</span><span class="va">layer</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>      layer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">z</span><span class="op">$</span><span class="va">layer</span><span class="op">)</span>,</span>
+<span>      tests <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span>,</span>
+<span>      significant_fdr_0_05 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">z</span><span class="op">$</span><span class="va">fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span>,</span>
+<span>      best_fdr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">z</span><span class="op">$</span><span class="va">fdr</span><span class="op">)</span>,</span>
+<span>      stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  <span class="va">layer_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">layer_summary</span><span class="op">)</span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">layer_summary</span>, digits <span class="op">=</span> <span class="fl">4</span>, caption <span class="op">=</span> <span class="st">"Association strength by layer"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<table class="table">
+<caption>Association strength by layer</caption>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="left">layer</th>
+<th align="right">tests</th>
+<th align="right">significant_fdr_0_05</th>
+<th align="right">best_fdr</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">CGM</td>
+<td align="left">CGM</td>
+<td align="right">44</td>
+<td align="right">14</td>
+<td align="right">0e+00</td>
+</tr>
+<tr class="even">
+<td align="left">FGM</td>
+<td align="left">FGM</td>
+<td align="right">36</td>
+<td align="right">4</td>
+<td align="right">1e-04</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">assoc</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">assoc</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">fgm_assoc</span> <span class="op">&lt;-</span> <span class="va">assoc</span><span class="op">[</span><span class="va">assoc</span><span class="op">$</span><span class="va">layer</span> <span class="op">==</span> <span class="st">"FGM"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"layer"</span>, <span class="st">"module"</span>, <span class="st">"phenotype"</span>, <span class="st">"test"</span>, <span class="st">"effect"</span>, <span class="st">"fdr"</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">fgm_assoc</span> <span class="op">&lt;-</span> <span class="va">fgm_assoc</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">fgm_assoc</span><span class="op">$</span><span class="va">fdr</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fgm_assoc</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fgm_assoc</span>, <span class="fl">8</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">4</span>, caption <span class="op">=</span> <span class="st">"Top FGM phenotype associations"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<table class="table">
+<caption>Top FGM phenotype associations</caption>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="left">layer</th>
+<th align="left">module</th>
+<th align="left">phenotype</th>
+<th align="left">test</th>
+<th align="right">effect</th>
+<th align="right">fdr</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">45</td>
+<td align="left">FGM</td>
+<td align="left">FGM_8</td>
+<td align="left">BT</td>
+<td align="left">anova</td>
+<td align="right">10.2064</td>
+<td align="right">0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">46</td>
+<td align="left">FGM</td>
+<td align="left">FGM_7</td>
+<td align="left">BT</td>
+<td align="left">anova</td>
+<td align="right">6.0804</td>
+<td align="right">0.0042</td>
+</tr>
+<tr class="odd">
+<td align="left">47</td>
+<td align="left">FGM</td>
+<td align="left">FGM_6</td>
+<td align="left">BT</td>
+<td align="left">anova</td>
+<td align="right">5.2110</td>
+<td align="right">0.0083</td>
+</tr>
+<tr class="even">
+<td align="left">48</td>
+<td align="left">FGM</td>
+<td align="left">FGM_5</td>
+<td align="left">BT</td>
+<td align="left">anova</td>
+<td align="right">4.6330</td>
+<td align="right">0.0117</td>
+</tr>
+<tr class="odd">
+<td align="left">49</td>
+<td align="left">FGM</td>
+<td align="left">FGM_7</td>
+<td align="left">mol.biol</td>
+<td align="left">anova</td>
+<td align="right">3.8306</td>
+<td align="right">0.2310</td>
+</tr>
+<tr class="even">
+<td align="left">50</td>
+<td align="left">FGM</td>
+<td align="left">FGM_1</td>
+<td align="left">BT</td>
+<td align="left">anova</td>
+<td align="right">2.4613</td>
+<td align="right">0.2506</td>
+</tr>
+<tr class="odd">
+<td align="left">51</td>
+<td align="left">FGM</td>
+<td align="left">FGM_4</td>
+<td align="left">sex</td>
+<td align="left">anova</td>
+<td align="right">2.4216</td>
+<td align="right">0.6345</td>
+</tr>
+<tr class="even">
+<td align="left">52</td>
+<td align="left">FGM</td>
+<td align="left">FGM_8</td>
+<td align="left">mol.biol</td>
+<td align="left">anova</td>
+<td align="right">2.0563</td>
+<td align="right">0.6792</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">is_empty_tbl</span><span class="op">(</span><span class="va">cgm_enr</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu">is_empty_tbl</span><span class="op">(</span><span class="va">fgm_enr</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>      note <span class="op">=</span> <span class="st">"No xCell/BostonGene enrichment was detected in this run, likely because probe IDs are not directly mapped to gene symbols in the bundled matrix."</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    caption <span class="op">=</span> <span class="st">"Enrichment interpretation note"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<table class="table">
+<caption>Enrichment interpretation note</caption>
+<colgroup><col width="100%"></colgroup>
+<thead><tr class="header">
+<th align="left">note</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td align="left">No xCell/BostonGene enrichment was detected in this
+run, likely because probe IDs are not directly mapped to gene symbols in
+the bundled matrix.</td>
+</tr></tbody>
+</table>
 <p>Main observation from this run:</p>
 <ul>
-<li>Strong FGM associations with <code>BT</code> (immunophenotype) and
-<code>mol.biol</code> (molecular subtype).</li>
-<li>The strongest effects are CGM-level for <code>BT</code> and
-<code>mol.biol</code>, and FGM-level modules add additional subtype
-signal.</li>
+<li>Strongest statistical signals are CGM-level and map to known ALL
+labels (<code>BT</code>, <code>mol.biol</code>), with best FDR around
+<code>1e-13</code>.</li>
+<li>FGMs still add subtype-linked signal (best FGM FDR around
+<code>1e-4</code>), but at lower magnitude than coarse modules.</li>
+<li>Network topology is layered: CGM graph captures broad leukemia
+structure, and FGM graph shows finer within-target relationships.</li>
 </ul>
+</div>
 </div>
 <div class="section level2">
 <h2 id="discussion">Discussion<a class="anchor" aria-label="anchor" href="#discussion"></a>
 </h2>
-<p>In ALL, subtype signal is expected but can be distributed across
-multiple pathways. The nested design first captures broad leukemia
-structure and then adds extra granularity through FGMs within a selected
-coarse module.</p>
+<p>In this microarray ALL cohort, known subtype structure is dominant,
+so it is expected that CGM-level scores carry most of the effect size.
+The results match that expectation: many CGM tests remain significant
+after FDR correction, while FGM signals are fewer and weaker but still
+detectable.</p>
+<p>The network diagram supports this reading. CGM modules form a clear
+global backbone corresponding to broad subtype organization. FGM modules
+contribute local edges and secondary partitions, indicating that nested
+decomposition is not redundant even when coarse subtype effects are
+strong.</p>
+<p>Biological enrichment is empty in this run because the packaged
+matrix uses probe identifiers and the included signature collections use
+gene symbols. This is an annotation-compatibility issue, not a failure
+of the module-discovery step.</p>
 </div>
 <div class="section level2">
 <h2 id="interpretation">Interpretation<a class="anchor" aria-label="anchor" href="#interpretation"></a>
 </h2>
-<p>For downstream use, CGMs provide a stable high-level representation,
-while FGMs capture additional subtype-sensitive variation suitable for
-stratification tasks. In this run, coarse modules explain the largest
-effects and fine modules provide secondary discriminatory signal.</p>
+<p>For practical ALL modeling, use CGM scores as the primary covariates
+for robust subtype-scale structure, then add selected FGMs when finer
+separation is needed for subgrouping. In this dataset, the objective is
+achieved: stage 1 recovers the dominant leukemia axes, and stage 2 adds
+interpretable substructure without replacing the coarse signal.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

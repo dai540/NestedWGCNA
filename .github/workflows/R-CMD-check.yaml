@@ -20,7 +20,7 @@ jobs:
           - {os: windows-latest, r: "release"}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v5
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -31,7 +31,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          dependencies: '"hard"'
+          dependencies: '"check"'
           extra-packages: |
             any::rcmdcheck
             any::roxygen2

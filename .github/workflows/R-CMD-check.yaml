@@ -38,6 +38,7 @@ jobs:
             any::knitr
             any::rmarkdown
             any::pkgdown
+            any::testthat
 
       - name: Document
         run: roxygen2::roxygenise()

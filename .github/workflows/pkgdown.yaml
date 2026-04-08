@@ -26,7 +26,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          dependencies: '"check"'
+          dependencies: '"hard"'
           extra-packages: |
             any::pkgdown
             any::roxygen2

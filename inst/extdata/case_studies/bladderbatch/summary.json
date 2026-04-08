@@ -3,148 +3,148 @@
   "source": "Bioconductor bladderbatch package v1.48.0 (dataset: bladderEset)",
   "random_state": 42,
   "input_meta": {
-    "input_min_before_shift": 2.76967271027191,
-    "shift_applied": 0.0,
-    "log1p_applied": 0.0,
-    "q99_after_shift_before_log": 11.299838722445196
+    "input_min_before_shift": 2.7696727103,
+    "shift_applied": 0,
+    "log1p_applied": 0,
+    "q99_after_shift_before_log": 11.2998387224
   },
   "n_samples": 57,
   "n_genes_input": 22283,
   "n_genes_model": 1200,
   "cgm_min_cluster_size": 12,
-  "cgm_n_modules": 19,
-  "cgm_assigned_genes": 766,
-  "cgm_noise_genes": 434,
-  "target_cgm": 11,
+  "cgm_n_modules": 59,
+  "cgm_assigned_genes": 801,
+  "cgm_noise_genes": 399,
+  "target_cgm": 52,
   "target_cgm_reason": "largest_cgm",
-  "target_cgm_size": 199,
-  "genfocus_corr_thr": 0.9,
-  "genfocus_ings_n": 12,
+  "target_cgm_size": 56,
+  "genfocus_corr_thr": null,
+  "genfocus_ings_n": 0,
   "fgm_min_cluster_size_requested": 6,
   "fgm_min_cluster_size_used": 6,
-  "fgm_n_modules": 11,
-  "fgm_assigned_genes": 128,
-  "fgm_noise_genes": 71,
+  "fgm_n_modules": 9,
+  "fgm_assigned_genes": 47,
+  "fgm_noise_genes": 1153,
   "top_phenotype_associations": [
     {
       "layer": "CGM",
-      "module": "CGM_9",
-      "phenotype": "outcome",
-      "test": "anova",
-      "effect": 32.264963479454224,
-      "fdr": 9.106494553417975e-12
-    },
-    {
-      "layer": "CGM",
-      "module": "CGM_9",
+      "module": "CGM_58",
       "phenotype": "cancer",
       "test": "anova",
-      "effect": 44.95425497769521,
-      "fdr": 9.144111443829909e-11
-    },
-    {
-      "layer": "FGM",
-      "module": "FGM_10",
-      "phenotype": "outcome",
-      "test": "anova",
-      "effect": 21.6497011253541,
-      "fdr": 4.847559819327021e-09
+      "effect": 56.5939038339,
+      "fdr": 3.6684483854e-07
     },
     {
       "layer": "CGM",
-      "module": "CGM_6",
+      "module": "CGM_22",
       "phenotype": "outcome",
       "test": "anova",
-      "effect": 18.381677800369598,
-      "fdr": 3.4514585363668956e-08
+      "effect": 27.757237112,
+      "fdr": 3.6684483854e-07
     },
     {
       "layer": "CGM",
-      "module": "CGM_15",
+      "module": "CGM_24",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 30.6784741176,
+      "fdr": 3.6684483854e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_29",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 31.8883685093,
+      "fdr": 3.6684483854e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_30",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 29.4377974924,
+      "fdr": 3.6684483854e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_58",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 29.7506339828,
+      "fdr": 3.6684483854e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_31",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 27.0695859399,
+      "fdr": 5.4862457781e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_26",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 25.9660619547,
+      "fdr": 5.9494395381e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_24",
       "phenotype": "cancer",
       "test": "anova",
-      "effect": 27.57344731202655,
-      "fdr": 7.982501570878224e-08
+      "effect": 58.2505273618,
+      "fdr": 8.1678186191e-07
     },
     {
       "layer": "CGM",
-      "module": "CGM_15",
+      "module": "CGM_25",
       "phenotype": "outcome",
       "test": "anova",
-      "effect": 15.754153895503869,
-      "fdr": 1.8895094099648384e-07
+      "effect": 24.1062519831,
+      "fdr": 1.0466422751e-06
     },
     {
-      "layer": "FGM",
-      "module": "FGM_10",
+      "layer": "CGM",
+      "module": "CGM_56",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 24.2582357914,
+      "fdr": 1.1099346989e-06
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_25",
       "phenotype": "cancer",
       "test": "anova",
-      "effect": 23.70885358515412,
-      "fdr": 6.714956235179559e-07
+      "effect": 44.0632753331,
+      "fdr": 1.3151450899e-06
     },
     {
       "layer": "CGM",
-      "module": "CGM_17",
-      "phenotype": "outcome",
-      "test": "anova",
-      "effect": 14.099994602098192,
-      "fdr": 7.002409445968439e-07
-    },
-    {
-      "layer": "CGM",
-      "module": "CGM_6",
+      "module": "CGM_27",
       "phenotype": "cancer",
       "test": "anova",
-      "effect": 22.320086196668523,
-      "fdr": 7.01382814665267e-07
-    },
-    {
-      "layer": "FGM",
-      "module": "FGM_9",
-      "phenotype": "cancer",
-      "test": "anova",
-      "effect": 22.731150699831645,
-      "fdr": 7.572592642495545e-07
+      "effect": 37.6822702395,
+      "fdr": 1.8266919505e-06
     },
     {
       "layer": "CGM",
-      "module": "CGM_10",
+      "module": "CGM_27",
       "phenotype": "outcome",
       "test": "anova",
-      "effect": 13.601787198629529,
-      "fdr": 8.371191034077341e-07
-    },
-    {
-      "layer": "FGM",
-      "module": "FGM_9",
-      "phenotype": "outcome",
-      "test": "anova",
-      "effect": 13.124834423742548,
-      "fdr": 1.5262991557018158e-06
-    },
-    {
-      "layer": "FGM",
-      "module": "FGM_7",
-      "phenotype": "cancer",
-      "test": "anova",
-      "effect": 20.13401009074146,
-      "fdr": 1.9334681644899187e-06
+      "effect": 20.3892641443,
+      "fdr": 2.3975016958e-06
     },
     {
       "layer": "CGM",
-      "module": "CGM_5",
-      "phenotype": "outcome",
+      "module": "CGM_22",
+      "phenotype": "cancer",
       "test": "anova",
-      "effect": 12.261595723198282,
-      "fdr": 2.7186700889949e-06
-    },
-    {
-      "layer": "FGM",
-      "module": "FGM_2",
-      "phenotype": "outcome",
-      "test": "anova",
-      "effect": 10.640837781185883,
-      "fdr": 1.2346722037963719e-05
+      "effect": 38.7216631998,
+      "fdr": 3.5857125467e-06
     }
   ]
 }

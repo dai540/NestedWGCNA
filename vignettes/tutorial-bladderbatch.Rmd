@@ -9,11 +9,12 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(NestedWGCNA)
 
 locate_case_file <- function(name) {
-  p <- system.file("extdata", "case_studies", "bladderbatch", name, package = "NestedWGCNA")
-  if (p == "") {
-    p <- file.path("inst", "extdata", "case_studies", "bladderbatch", name)
+  p <- file.path("inst", "extdata", "case_studies", "bladderbatch", name)
+  if (!file.exists(p)) {
+    p <- system.file("extdata", "case_studies", "bladderbatch", name, package = "NestedWGCNA")
   }
   p
 }
@@ -53,7 +54,7 @@ Pipeline settings in this run:
 
 1. Select top 1,200 variable probes.
 2. CGM discovery with `min_cluster_size = 12`.
-3. GenFocus inside the target CGM.
+3. Attempt GenFocus inside the target CGM; if INGS is not established, continue with direct FGM clustering.
 4. FGM discovery with requested `min_cluster_size = 6`.
 5. Module score association against `cancer`, `outcome`, and `batch`.
 
@@ -98,12 +99,12 @@ if (!is.null(summary_obj)) {
 ```
 
 ```{r, echo = FALSE, fig.cap = "CGM module size distribution (bladderbatch)"}
-img <- locate_case_file("cgm_module_sizes.png")
+img <- "figures/bladderbatch_cgm_module_sizes.png"
 if (file.exists(img)) knitr::include_graphics(img)
 ```
 
 ```{r, echo = FALSE, fig.cap = "FGM module size distribution (bladderbatch)"}
-img <- locate_case_file("fgm_module_sizes.png")
+img <- "figures/bladderbatch_fgm_module_sizes.png"
 if (file.exists(img)) knitr::include_graphics(img)
 ```
 
@@ -117,13 +118,13 @@ if (!is.null(assoc) && nrow(assoc) > 0) {
 
 Main observation from this run:
 
-- Multiple CGMs and FGMs were strongly associated with `outcome` and `cancer`.
-- This indicates that the module hierarchy captures disease-state-related expression programs.
+- Multiple CGMs were strongly associated with `outcome` and `cancer`.
+- FGMs were recovered in the target CGM and provide additional substructure, but dominant phenotype effects remained at the CGM layer.
 
 # Discussion
 
-For relatively small cohorts, module discovery can be sensitive to hyperparameters. Even under this constraint, strong and repeated associations with bladder phenotypes suggest the nested structure is recovering non-random biological organization rather than batch noise alone.
+For relatively small cohorts, module discovery is sensitive to hyperparameters. Even under this constraint, repeated CGM associations with bladder phenotypes suggest the recovered hierarchy captures disease-related organization rather than random structure.
 
 # Interpretation
 
-In this dataset, high-signal modules linked to `cancer`/`outcome` can be interpreted as candidate disease programs for downstream validation. The nested step provides additional granularity and can separate finer programs that are not obvious at the coarse layer.
+In this dataset, high-signal CGMs linked to `cancer`/`outcome` can be interpreted as candidate disease programs for downstream validation. The nested step still contributes finer module partitions inside the selected CGM for follow-up analyses.

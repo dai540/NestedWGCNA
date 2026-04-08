@@ -3,148 +3,148 @@
   "source": "Bioconductor ALL package v1.52.0 (dataset: ALL ExpressionSet)",
   "random_state": 42,
   "input_meta": {
-    "input_min_before_shift": 1.98491895357922,
-    "shift_applied": 0.0,
-    "log1p_applied": 0.0,
-    "q99_after_shift_before_log": 10.96287711327728
+    "input_min_before_shift": 1.9849189536,
+    "shift_applied": 0,
+    "log1p_applied": 0,
+    "q99_after_shift_before_log": 10.9628771133
   },
   "n_samples": 128,
   "n_genes_input": 12625,
   "n_genes_model": 1200,
   "cgm_min_cluster_size": 30,
-  "cgm_n_modules": 2,
-  "cgm_assigned_genes": 1072,
-  "cgm_noise_genes": 128,
+  "cgm_n_modules": 11,
+  "cgm_assigned_genes": 574,
+  "cgm_noise_genes": 626,
   "target_cgm": 1,
   "target_cgm_reason": "largest_cgm",
-  "target_cgm_size": 1018,
-  "genfocus_corr_thr": 0.75,
-  "genfocus_ings_n": 4,
+  "target_cgm_size": 170,
+  "genfocus_corr_thr": null,
+  "genfocus_ings_n": 0,
   "fgm_min_cluster_size_requested": 8,
   "fgm_min_cluster_size_used": 8,
-  "fgm_n_modules": 7,
-  "fgm_assigned_genes": 926,
-  "fgm_noise_genes": 92,
+  "fgm_n_modules": 9,
+  "fgm_assigned_genes": 136,
+  "fgm_noise_genes": 1064,
   "top_phenotype_associations": [
     {
-      "layer": "FGM",
-      "module": "FGM_0",
+      "layer": "CGM",
+      "module": "CGM_5",
+      "phenotype": "BT",
+      "test": "anova",
+      "effect": 60.6070444928,
+      "fdr": 1.2420642262e-13
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_6",
       "phenotype": "mol.biol",
       "test": "anova",
-      "effect": 67.5566978077981,
-      "fdr": 2.3156375520956783e-24
+      "effect": 75.2374893431,
+      "fdr": 3.8785944035e-09
     },
     {
-      "layer": "FGM",
-      "module": "FGM_6",
+      "layer": "CGM",
+      "module": "CGM_4",
       "phenotype": "BT",
       "test": "anova",
-      "effect": 22.391321700365904,
-      "fdr": 7.714228702170127e-18
+      "effect": 22.2006885476,
+      "fdr": 1.3157997582e-08
     },
     {
-      "layer": "FGM",
-      "module": "FGM_0",
-      "phenotype": "BT",
-      "test": "anova",
-      "effect": 10.500383730597637,
-      "fdr": 3.2222140105324806e-09
-    },
-    {
-      "layer": "FGM",
-      "module": "FGM_2",
-      "phenotype": "BT",
-      "test": "anova",
-      "effect": 9.841905653358237,
-      "fdr": 9.198946635705674e-09
-    },
-    {
-      "layer": "FGM",
-      "module": "FGM_4",
-      "phenotype": "BT",
-      "test": "anova",
-      "effect": 6.517074097080325,
-      "fdr": 9.524323953555776e-06
-    },
-    {
-      "layer": "FGM",
-      "module": "FGM_3",
-      "phenotype": "BT",
-      "test": "anova",
-      "effect": 5.747527642052969,
-      "fdr": 4.5920279043384855e-05
-    },
-    {
-      "layer": "FGM",
-      "module": "FGM_2",
+      "layer": "CGM",
+      "module": "CGM_5",
       "phenotype": "mol.biol",
       "test": "anova",
-      "effect": 8.33935451998315,
-      "fdr": 0.00017369656483714552
+      "effect": 50.1551743979,
+      "fdr": 1.7770830022e-08
     },
     {
-      "layer": "FGM",
-      "module": "FGM_6",
+      "layer": "CGM",
+      "module": "CGM_8",
       "phenotype": "mol.biol",
       "test": "anova",
-      "effect": 6.982643271424116,
-      "fdr": 0.0007871510581613474
+      "effect": 24.024985614,
+      "fdr": 2.8916157658e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_6",
+      "phenotype": "BT",
+      "test": "anova",
+      "effect": 14.6532792902,
+      "fdr": 4.7325932736e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_8",
+      "phenotype": "BT",
+      "test": "anova",
+      "effect": 11.2306093849,
+      "fdr": 1.0029472152e-05
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_7",
+      "phenotype": "mol.biol",
+      "test": "anova",
+      "effect": 25.9631806393,
+      "fdr": 1.8445675354e-05
     },
     {
       "layer": "FGM",
-      "module": "FGM_1",
+      "module": "FGM_8",
       "phenotype": "BT",
       "test": "anova",
-      "effect": 4.004313017379185,
-      "fdr": 0.0018079732146918511
+      "effect": 10.2063681452,
+      "fdr": 0.00010534822283
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_2",
+      "phenotype": "BT",
+      "test": "anova",
+      "effect": 7.0219164189,
+      "fdr": 0.00026604236861
     },
     {
       "layer": "CGM",
       "module": "CGM_1",
-      "phenotype": "mol.biol",
+      "phenotype": "BT",
       "test": "anova",
-      "effect": 6.482072031093963,
-      "fdr": 0.0033295323295889317
+      "effect": 6.4159650461,
+      "fdr": 0.00064459220682
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_7",
+      "phenotype": "BT",
+      "test": "anova",
+      "effect": 5.1335705995,
+      "fdr": 0.0034861924925
+    },
+    {
+      "layer": "FGM",
+      "module": "FGM_7",
+      "phenotype": "BT",
+      "test": "anova",
+      "effect": 6.0803628392,
+      "fdr": 0.0041527060571
+    },
+    {
+      "layer": "FGM",
+      "module": "FGM_6",
+      "phenotype": "BT",
+      "test": "anova",
+      "effect": 5.2110230422,
+      "fdr": 0.0083211083043
     },
     {
       "layer": "FGM",
       "module": "FGM_5",
       "phenotype": "BT",
       "test": "anova",
-      "effect": 3.1186869875317127,
-      "fdr": 0.013165389581686632
-    },
-    {
-      "layer": "CGM",
-      "module": "CGM_0",
-      "phenotype": "age",
-      "test": "spearman",
-      "effect": 0.2249931898826323,
-      "fdr": 0.04939986381698744
-    },
-    {
-      "layer": "CGM",
-      "module": "CGM_1",
-      "phenotype": "age",
-      "test": "spearman",
-      "effect": 0.2019198609349519,
-      "fdr": 0.06696865294010412
-    },
-    {
-      "layer": "CGM",
-      "module": "CGM_1",
-      "phenotype": "BT",
-      "test": "anova",
-      "effect": 2.257793466667756,
-      "fdr": 0.06859338958176729
-    },
-    {
-      "layer": "CGM",
-      "module": "CGM_0",
-      "phenotype": "mol.biol",
-      "test": "anova",
-      "effect": 2.0382773489435073,
-      "fdr": 0.17929427591888197
+      "effect": 4.6329942758,
+      "fdr": 0.011683484845
     }
   ]
 }

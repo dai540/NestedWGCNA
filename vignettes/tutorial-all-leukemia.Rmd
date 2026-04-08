@@ -9,11 +9,12 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(NestedWGCNA)
 
 locate_case_file <- function(name) {
-  p <- system.file("extdata", "case_studies", "all_leukemia", name, package = "NestedWGCNA")
-  if (p == "") {
-    p <- file.path("inst", "extdata", "case_studies", "all_leukemia", name)
+  p <- file.path("inst", "extdata", "case_studies", "all_leukemia", name)
+  if (!file.exists(p)) {
+    p <- system.file("extdata", "case_studies", "all_leukemia", name, package = "NestedWGCNA")
   }
   p
 }
@@ -23,6 +24,7 @@ assoc_path <- locate_case_file("phenotype_associations.tsv")
 
 summary_obj <- if (file.exists(summary_path)) jsonlite::fromJSON(summary_path) else NULL
 assoc <- if (file.exists(assoc_path)) read.delim(assoc_path, check.names = FALSE) else NULL
+val_or_na <- function(x) if (is.null(x)) NA else x
 ```
 
 # Background
@@ -53,7 +55,7 @@ Pipeline settings in this run:
 
 1. Select top 1,200 variable probes.
 2. CGM discovery with `min_cluster_size = 30`.
-3. GenFocus inside the selected CGM.
+3. Attempt GenFocus inside the selected CGM; if INGS is not established, use direct FGM clustering on the CGM matrix.
 4. FGM discovery with requested `min_cluster_size = 8`.
 5. Association testing of module scores against `BT`, `mol.biol`, `sex`, and `age`.
 
@@ -75,7 +77,7 @@ if (!is.null(summary_obj)) {
       summary_obj$n_genes_model,
       summary_obj$cgm_n_modules,
       summary_obj$fgm_n_modules,
-      summary_obj$genfocus_corr_thr,
+      val_or_na(summary_obj$genfocus_corr_thr),
       summary_obj$genfocus_ings_n
     )
   )
@@ -98,12 +100,12 @@ if (!is.null(summary_obj)) {
 ```
 
 ```{r, echo = FALSE, fig.cap = "CGM module size distribution (ALL)"}
-img <- locate_case_file("cgm_module_sizes.png")
+img <- "figures/all_leukemia_cgm_module_sizes.png"
 if (file.exists(img)) knitr::include_graphics(img)
 ```
 
 ```{r, echo = FALSE, fig.cap = "FGM module size distribution (ALL)"}
-img <- locate_case_file("fgm_module_sizes.png")
+img <- "figures/all_leukemia_fgm_module_sizes.png"
 if (file.exists(img)) knitr::include_graphics(img)
 ```
 
@@ -118,12 +120,12 @@ if (!is.null(assoc) && nrow(assoc) > 0) {
 Main observation from this run:
 
 - Strong FGM associations with `BT` (immunophenotype) and `mol.biol` (molecular subtype).
-- The strongest association was FGM-level, indicating Stage 2 refinement carries subtype-discriminating information.
+- The strongest effects are CGM-level for `BT` and `mol.biol`, and FGM-level modules add additional subtype signal.
 
 # Discussion
 
-In ALL, subtype signal is expected but can be distributed across multiple pathways. The nested design helps by first collecting broad leukemia co-expression structure, then splitting it into finer modules that align more directly with subtype labels.
+In ALL, subtype signal is expected but can be distributed across multiple pathways. The nested design first captures broad leukemia structure and then adds extra granularity through FGMs within a selected coarse module.
 
 # Interpretation
 
-For downstream use, CGMs provide a stable high-level representation, while FGMs capture subtype-sensitive variation suitable for stratification tasks. In this run, FGM-level associations with `BT`/`mol.biol` were stronger than coarse-level associations, consistent with the intended purpose of the two-stage method.
+For downstream use, CGMs provide a stable high-level representation, while FGMs capture additional subtype-sensitive variation suitable for stratification tasks. In this run, coarse modules explain the largest effects and fine modules provide secondary discriminatory signal.

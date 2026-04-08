@@ -1,0 +1,150 @@
+{
+  "dataset_id": "bladderbatch",
+  "source": "Bioconductor bladderbatch package v1.48.0 (dataset: bladderEset)",
+  "random_state": 42,
+  "input_meta": {
+    "input_min_before_shift": 2.76967271027191,
+    "shift_applied": 0.0,
+    "log1p_applied": 0.0,
+    "q99_after_shift_before_log": 11.299838722445196
+  },
+  "n_samples": 57,
+  "n_genes_input": 22283,
+  "n_genes_model": 1200,
+  "cgm_min_cluster_size": 12,
+  "cgm_n_modules": 19,
+  "cgm_assigned_genes": 766,
+  "cgm_noise_genes": 434,
+  "target_cgm": 11,
+  "target_cgm_reason": "largest_cgm",
+  "target_cgm_size": 199,
+  "genfocus_corr_thr": 0.9,
+  "genfocus_ings_n": 12,
+  "fgm_min_cluster_size_requested": 6,
+  "fgm_min_cluster_size_used": 6,
+  "fgm_n_modules": 11,
+  "fgm_assigned_genes": 128,
+  "fgm_noise_genes": 71,
+  "top_phenotype_associations": [
+    {
+      "layer": "CGM",
+      "module": "CGM_9",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 32.264963479454224,
+      "fdr": 9.106494553417975e-12
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_9",
+      "phenotype": "cancer",
+      "test": "anova",
+      "effect": 44.95425497769521,
+      "fdr": 9.144111443829909e-11
+    },
+    {
+      "layer": "FGM",
+      "module": "FGM_10",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 21.6497011253541,
+      "fdr": 4.847559819327021e-09
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_6",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 18.381677800369598,
+      "fdr": 3.4514585363668956e-08
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_15",
+      "phenotype": "cancer",
+      "test": "anova",
+      "effect": 27.57344731202655,
+      "fdr": 7.982501570878224e-08
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_15",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 15.754153895503869,
+      "fdr": 1.8895094099648384e-07
+    },
+    {
+      "layer": "FGM",
+      "module": "FGM_10",
+      "phenotype": "cancer",
+      "test": "anova",
+      "effect": 23.70885358515412,
+      "fdr": 6.714956235179559e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_17",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 14.099994602098192,
+      "fdr": 7.002409445968439e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_6",
+      "phenotype": "cancer",
+      "test": "anova",
+      "effect": 22.320086196668523,
+      "fdr": 7.01382814665267e-07
+    },
+    {
+      "layer": "FGM",
+      "module": "FGM_9",
+      "phenotype": "cancer",
+      "test": "anova",
+      "effect": 22.731150699831645,
+      "fdr": 7.572592642495545e-07
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_10",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 13.601787198629529,
+      "fdr": 8.371191034077341e-07
+    },
+    {
+      "layer": "FGM",
+      "module": "FGM_9",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 13.124834423742548,
+      "fdr": 1.5262991557018158e-06
+    },
+    {
+      "layer": "FGM",
+      "module": "FGM_7",
+      "phenotype": "cancer",
+      "test": "anova",
+      "effect": 20.13401009074146,
+      "fdr": 1.9334681644899187e-06
+    },
+    {
+      "layer": "CGM",
+      "module": "CGM_5",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 12.261595723198282,
+      "fdr": 2.7186700889949e-06
+    },
+    {
+      "layer": "FGM",
+      "module": "FGM_2",
+      "phenotype": "outcome",
+      "test": "anova",
+      "effect": 10.640837781185883,
+      "fdr": 1.2346722037963719e-05
+    }
+  ]
+}

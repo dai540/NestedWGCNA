@@ -1,0 +1,41 @@
+template:
+  bootstrap: 5
+
+home:
+  title: NestedWGCNA
+  description: Two-stage gene co-expression analysis for bulk RNA-seq.
+
+navbar:
+  structure:
+    left: [intro, reference, articles]
+    right: [search, github]
+  components:
+    intro:
+      text: Home
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Package article
+        href: articles/package-article.html
+      - text: TCGA-BLCA tutorial
+        href: articles/tutorial-tcga-blca.html
+      - text: ALL leukemia tutorial
+        href: articles/tutorial-all-leukemia.html
+      - text: bladderbatch tutorial
+        href: articles/tutorial-bladderbatch.html
+    github:
+      icon: fab fa-github
+      href: https://github.com/dai540/NestedWGCNA
+
+articles:
+- title: NestedWGCNA
+  navbar: NestedWGCNA
+  contents:
+  - package-article
+  - tutorial-tcga-blca
+  - tutorial-all-leukemia
+  - tutorial-bladderbatch

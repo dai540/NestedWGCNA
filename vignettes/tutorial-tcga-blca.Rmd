@@ -1,0 +1,166 @@
+---
+title: "Tutorial: TCGA-BLCA real-data analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial: TCGA-BLCA real-data analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+
+locate_case_file <- function(name) {
+  p <- system.file("extdata", "case_studies", "tcga_blca", name, package = "NestedWGCNA")
+  if (p == "") {
+    p <- file.path("inst", "extdata", "case_studies", "tcga_blca", name)
+  }
+  p
+}
+
+summary_path <- locate_case_file("summary.json")
+cgm_enr_path <- locate_case_file("cgm_enrichment.tsv")
+fgm_enr_path <- locate_case_file("fgm_enrichment.tsv")
+
+summary_obj <- if (file.exists(summary_path)) jsonlite::fromJSON(summary_path) else NULL
+cgm_enr <- if (file.exists(cgm_enr_path)) read.delim(cgm_enr_path, check.names = FALSE) else NULL
+fgm_enr <- if (file.exists(fgm_enr_path)) read.delim(fgm_enr_path, check.names = FALSE) else NULL
+```
+
+# Background
+
+Bulk RNA-seq co-expression analysis often mixes strong tissue-level signals with finer immune-state signals. A single module scale can miss this hierarchy. NestedWGCNA addresses this by first identifying broad modules (CGMs), then re-normalizing and re-clustering inside each module to reveal FGM structure.
+
+# Objective
+
+The objective of this tutorial is to run a fully reproducible, real-data NestedWGCNA workflow on TCGA-BLCA and interpret whether the two-stage design separates broad tumor programs from finer immune programs.
+
+# Data source and download
+
+This tutorial uses an openly available TCGA-BLCA expression matrix:
+
+- URL: `https://raw.githubusercontent.com/ilyada/NestedWGCNA/main/data/TCGA_BLCA.tsv`
+- Samples: 406
+- Genes: 20,017
+
+The analysis script downloads the expression matrix and signature references, runs the full pipeline, and writes summary outputs under `inst/extdata/case_studies/tcga_blca/`.
+
+```{r, eval = FALSE}
+system("python inst/scripts/run_tcga_blca_case_study.py")
+```
+
+# Methods
+
+The executed case-study configuration is:
+
+1. Log-transform expression and keep top 1,200 variable genes.
+2. Run CGM discovery (`min_cluster_size = 50`) with the reference `utils.py`.
+3. Select an immune-like CGM by signature enrichment.
+4. Run GenFocus (`focus_gene = 'eigengene'`, `corr_thr = 0.9`, `CVR_thr = 0.6`).
+5. Run FGM discovery in that CGM (`min_cluster_size = 10`).
+6. Perform hypergeometric enrichment against xCell and BostonGene signatures.
+
+```{r}
+if (!is.null(summary_obj)) {
+  method_tbl <- data.frame(
+    item = c(
+      "samples",
+      "input genes",
+      "modeled genes",
+      "CGM min_cluster_size",
+      "FGM min_cluster_size",
+      "GenFocus corr_thr",
+      "GenFocus INGS genes"
+    ),
+    value = c(
+      summary_obj$n_samples,
+      summary_obj$n_genes_input,
+      summary_obj$n_genes_model,
+      summary_obj$cgm_min_cluster_size,
+      summary_obj$fgm_min_cluster_size_used,
+      summary_obj$genfocus_corr_thr,
+      summary_obj$genfocus_ings_n
+    )
+  )
+  knitr::kable(method_tbl, caption = "Case-study analysis settings")
+}
+```
+
+# Results
+
+## Module recovery
+
+```{r}
+if (!is.null(summary_obj)) {
+  res_tbl <- data.frame(
+    layer = c("CGM", "FGM (inside target CGM)"),
+    modules = c(summary_obj$cgm_n_modules, summary_obj$fgm_n_modules),
+    assigned_genes = c(summary_obj$cgm_assigned_genes, summary_obj$fgm_assigned_genes),
+    noise_genes = c(summary_obj$cgm_noise_genes, summary_obj$fgm_noise_genes)
+  )
+  knitr::kable(res_tbl, caption = "Recovered modules")
+}
+```
+
+```{r, echo = FALSE, fig.cap = "CGM sizes"}
+img <- locate_case_file("cgm_module_sizes.png")
+if (file.exists(img)) knitr::include_graphics(img)
+```
+
+```{r, echo = FALSE, fig.cap = "FGM sizes in target CGM"}
+img <- locate_case_file("fgm_module_sizes.png")
+if (file.exists(img)) knitr::include_graphics(img)
+```
+
+## Biological enrichment
+
+```{r}
+if (!is.null(cgm_enr) && nrow(cgm_enr) > 0) {
+  cgm_top <- cgm_enr[order(cgm_enr$fdr), c("module", "source", "signature", "k", "K", "fdr")]
+  cgm_top <- head(cgm_top, 10)
+  knitr::kable(cgm_top, digits = 4, caption = "Top CGM enrichments")
+}
+```
+
+```{r}
+if (!is.null(fgm_enr) && nrow(fgm_enr) > 0) {
+  fgm_top <- fgm_enr[order(fgm_enr$fdr), c("fgm", "source", "signature", "k", "K", "fdr")]
+  fgm_top <- head(fgm_top, 10)
+  knitr::kable(fgm_top, digits = 4, caption = "Top FGM enrichments")
+}
+```
+
+Observed structure in this run:
+
+- CGM-3: strong stromal/mesenchymal program (Astrocytes_FANTOM signatures).
+- CGM-1: epithelial/keratin program (Keratinocytes signatures).
+- CGM-2: macrophage-like immune program (Macrophages_BLUEPRINT signatures).
+
+FGM split inside CGM-2:
+
+- FGM-0: interferon/MHC-II-like branch.
+- FGM-1: cytotoxic T-cell-like branch (CD8+ Tem / Tgd signatures).
+
+# Discussion
+
+The two-stage structure is supported by the output:
+
+- Stage 1 recovered broad, high-level tissue programs.
+- Stage 2 split the immune-like CGM into finer branches with distinct immune biology.
+
+This is exactly the expected use case for nested co-expression analysis in bulk tumors, where immune and stromal signals are often superimposed.
+
+# Interpretation
+
+For translational analyses, these outputs can be interpreted as:
+
+- CGM labels: macro-context (stromal vs epithelial vs immune-rich).
+- FGM labels: within-context immune states that may align with antigen presentation or cytotoxic activity.
+
+In this run, the coexistence of an MHC-II-like FGM and a cytotoxic T-like FGM within the same immune CGM suggests heterogeneous immune microenvironments across BLCA tumors.
+
+# Practical caveats
+
+- Results depend on variable-gene selection and clustering hyperparameters.
+- UMAP + HDBSCAN agreement should be judged by cluster quality and biological coherence, not label identity alone.
+- The Python reference code needed a deterministic patch for set operations in GenFocus to ensure stable repeated outputs.

@@ -1,0 +1,25 @@
+Package: NestedWGCNA
+Title: Two-Stage Gene Co-Expression Network Analysis
+Version: 0.0.0.9000
+Authors@R:
+    person(given = "Daiki",
+           family = "Developer",
+           role = c("aut", "cre"),
+           email = "daiki@example.com")
+Description: Tools and reproducible case-study outputs for a two-stage
+    gene co-expression workflow based on coarse-grained and fine-grained
+    modules.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 4.1.0)
+Imports:
+    jsonlite
+Suggests:
+    knitr,
+    pkgdown,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3

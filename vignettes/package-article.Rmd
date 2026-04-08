@@ -1,0 +1,149 @@
+---
+title: "NestedWGCNA package article"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{NestedWGCNA package article}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+read_summary <- function(dataset) {
+  p <- system.file("extdata", "case_studies", dataset, "summary.json", package = "NestedWGCNA")
+  if (p == "") {
+    p <- file.path("inst", "extdata", "case_studies", dataset, "summary.json")
+  }
+  if (file.exists(p)) jsonlite::fromJSON(p) else NULL
+}
+summary_tcga <- read_summary("tcga_blca")
+summary_all <- read_summary("all_leukemia")
+summary_bladder <- read_summary("bladderbatch")
+```
+
+# Why NestedWGCNA?
+
+NestedWGCNA is a two-stage co-expression framework designed to separate broad biological programs from finer, within-program substructure.
+
+The workflow is:
+
+1. Build a gene-gene network and discover **coarse-grained modules (CGMs)**.
+2. Extract CGM core genes and apply GenFocus normalization.
+3. Re-cluster within CGMs to discover **fine-grained modules (FGMs)**.
+
+Compared with classical WGCNA, the reference implementation uses UMAP + HDBSCAN and a nested decomposition strategy.
+
+# Design policy for the R package
+
+The package is being formalized around explicit method modes:
+
+- `mode = "paper"`: follows the manuscript/README definition.
+- `mode = "python_compat"`: reproduces current Python behavior.
+- `mode = "custom"`: expert override for similarity/dissimilarity settings.
+
+This mode split is the central reproducibility contract of the R package.
+
+# Architecture
+
+Repository layout is organized around:
+
+- Core algorithm references (`inst/python_ref/utils.py`, `inst/python_ref/GenFocus.py`).
+- R package scaffold (`DESCRIPTION`, `R/`, `tests/`, `vignettes/`).
+- Reproducible real-data outputs (`inst/extdata/case_studies/`).
+
+Case-study scripts are:
+
+```text
+python inst/scripts/run_tcga_blca_case_study.py
+Rscript inst/scripts/run_all_leukemia_case_study.R
+Rscript inst/scripts/run_bladderbatch_case_study.R
+```
+
+# Real-data snapshot (TCGA-BLCA)
+
+The package docs are backed by an executed analysis on downloaded TCGA-BLCA data.
+
+```{r}
+if (!is.null(summary_tcga)) {
+  key <- data.frame(
+    metric = c(
+      "samples",
+      "input genes",
+      "modeled genes",
+      "CGM modules",
+      "CGM assigned genes",
+      "target CGM",
+      "target CGM size",
+      "INGS genes",
+      "FGM modules",
+      "FGM assigned genes"
+    ),
+    value = c(
+      summary_tcga$n_samples,
+      summary_tcga$n_genes_input,
+      summary_tcga$n_genes_model,
+      summary_tcga$cgm_n_modules,
+      summary_tcga$cgm_assigned_genes,
+      summary_tcga$target_cgm,
+      summary_tcga$target_cgm_size,
+      summary_tcga$genfocus_ings_n,
+      summary_tcga$fgm_n_modules,
+      summary_tcga$fgm_assigned_genes
+    )
+  )
+  knitr::kable(key, caption = "TCGA-BLCA case-study summary")
+}
+```
+
+```{r, echo = FALSE, fig.cap = "CGM module size distribution"}
+img_cgm <- system.file(
+  "extdata", "case_studies", "tcga_blca", "cgm_module_sizes.png", package = "NestedWGCNA"
+)
+if (img_cgm == "") {
+  img_cgm <- file.path("inst", "extdata", "case_studies", "tcga_blca", "cgm_module_sizes.png")
+}
+if (file.exists(img_cgm)) {
+  knitr::include_graphics(img_cgm)
+}
+```
+
+```{r, echo = FALSE, fig.cap = "FGM module size distribution in the selected immune-like CGM"}
+img_fgm <- system.file(
+  "extdata", "case_studies", "tcga_blca", "fgm_module_sizes.png", package = "NestedWGCNA"
+)
+if (img_fgm == "") {
+  img_fgm <- file.path("inst", "extdata", "case_studies", "tcga_blca", "fgm_module_sizes.png")
+}
+if (file.exists(img_fgm)) {
+  knitr::include_graphics(img_fgm)
+}
+```
+
+# Multi-dataset tutorial set
+
+```{r}
+summaries <- list(summary_tcga, summary_all, summary_bladder)
+summaries <- summaries[!vapply(summaries, is.null, logical(1))]
+if (length(summaries)) {
+  tbl <- do.call(
+    rbind,
+    lapply(
+      summaries,
+      function(x) data.frame(
+        dataset = x$dataset_id,
+        samples = x$n_samples,
+        input_genes = x$n_genes_input,
+        modeled_genes = x$n_genes_model,
+        cgm_modules = x$cgm_n_modules,
+        fgm_modules = x$fgm_n_modules,
+        stringsAsFactors = FALSE
+      )
+    )
+  )
+  knitr::kable(tbl, caption = "Executed real-data tutorial datasets")
+}
+```
+
+# Interpretation in one paragraph
+
+In this run, the CGM layer recovers broad stromal-like, epithelial-like, and macrophage-like structures, and the nested FGM layer further separates the immune-like CGM into an interferon/MHC-II branch and a cytotoxic T-cell branch. This is the expected qualitative behavior of the method: first capture coarse tissue programs, then resolve finer immune states after core-based normalization.

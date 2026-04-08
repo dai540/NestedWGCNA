@@ -1,0 +1,129 @@
+---
+title: "Tutorial: bladderbatch real-data analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial: bladderbatch real-data analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+
+locate_case_file <- function(name) {
+  p <- system.file("extdata", "case_studies", "bladderbatch", name, package = "NestedWGCNA")
+  if (p == "") {
+    p <- file.path("inst", "extdata", "case_studies", "bladderbatch", name)
+  }
+  p
+}
+
+summary_path <- locate_case_file("summary.json")
+assoc_path <- locate_case_file("phenotype_associations.tsv")
+
+summary_obj <- if (file.exists(summary_path)) jsonlite::fromJSON(summary_path) else NULL
+assoc <- if (file.exists(assoc_path)) read.delim(assoc_path, check.names = FALSE) else NULL
+```
+
+# Background
+
+The Bioconductor `bladderbatch` dataset contains bladder-related expression profiles with sample labels for cancer status (`cancer`) and study outcome group (`outcome`), plus batch labels. It is suitable for evaluating whether NestedWGCNA detects biologically and clinically structured modules in a small-to-medium cohort.
+
+# Objective
+
+The goal is to test whether CGM/FGM module scores are associated with `cancer` and `outcome` labels in real bladder data.
+
+# Data source and execution
+
+This tutorial uses real data downloaded through Bioconductor package installation:
+
+- Dataset: `bladderbatch::bladderEset`
+- Samples: 57
+- Features (probes): 22,283
+
+Run:
+
+```{r, eval = FALSE}
+system("Rscript inst/scripts/run_bladderbatch_case_study.R")
+```
+
+# Methods
+
+Pipeline settings in this run:
+
+1. Select top 1,200 variable probes.
+2. CGM discovery with `min_cluster_size = 12`.
+3. GenFocus inside the target CGM.
+4. FGM discovery with requested `min_cluster_size = 6`.
+5. Module score association against `cancer`, `outcome`, and `batch`.
+
+```{r}
+if (!is.null(summary_obj)) {
+  method_tbl <- data.frame(
+    item = c(
+      "samples",
+      "input probes",
+      "modeled probes",
+      "CGM modules",
+      "FGM modules",
+      "target CGM",
+      "GenFocus INGS"
+    ),
+    value = c(
+      summary_obj$n_samples,
+      summary_obj$n_genes_input,
+      summary_obj$n_genes_model,
+      summary_obj$cgm_n_modules,
+      summary_obj$fgm_n_modules,
+      summary_obj$target_cgm,
+      summary_obj$genfocus_ings_n
+    )
+  )
+  knitr::kable(method_tbl, caption = "bladderbatch case-study summary")
+}
+```
+
+# Results
+
+```{r}
+if (!is.null(summary_obj)) {
+  res_tbl <- data.frame(
+    layer = c("CGM", "FGM"),
+    modules = c(summary_obj$cgm_n_modules, summary_obj$fgm_n_modules),
+    assigned_genes = c(summary_obj$cgm_assigned_genes, summary_obj$fgm_assigned_genes),
+    noise_genes = c(summary_obj$cgm_noise_genes, summary_obj$fgm_noise_genes)
+  )
+  knitr::kable(res_tbl, caption = "Recovered module structure")
+}
+```
+
+```{r, echo = FALSE, fig.cap = "CGM module size distribution (bladderbatch)"}
+img <- locate_case_file("cgm_module_sizes.png")
+if (file.exists(img)) knitr::include_graphics(img)
+```
+
+```{r, echo = FALSE, fig.cap = "FGM module size distribution (bladderbatch)"}
+img <- locate_case_file("fgm_module_sizes.png")
+if (file.exists(img)) knitr::include_graphics(img)
+```
+
+```{r}
+if (!is.null(assoc) && nrow(assoc) > 0) {
+  top_assoc <- assoc[order(assoc$fdr), c("layer", "module", "phenotype", "test", "effect", "fdr")]
+  top_assoc <- head(top_assoc, 12)
+  knitr::kable(top_assoc, digits = 4, caption = "Top phenotype associations")
+}
+```
+
+Main observation from this run:
+
+- Multiple CGMs and FGMs were strongly associated with `outcome` and `cancer`.
+- This indicates that the module hierarchy captures disease-state-related expression programs.
+
+# Discussion
+
+For relatively small cohorts, module discovery can be sensitive to hyperparameters. Even under this constraint, strong and repeated associations with bladder phenotypes suggest the nested structure is recovering non-random biological organization rather than batch noise alone.
+
+# Interpretation
+
+In this dataset, high-signal modules linked to `cancer`/`outcome` can be interpreted as candidate disease programs for downstream validation. The nested step provides additional granularity and can separate finer programs that are not obvious at the coarse layer.

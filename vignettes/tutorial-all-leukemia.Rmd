@@ -1,0 +1,129 @@
+---
+title: "Tutorial: ALL leukemia real-data analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial: ALL leukemia real-data analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+
+locate_case_file <- function(name) {
+  p <- system.file("extdata", "case_studies", "all_leukemia", name, package = "NestedWGCNA")
+  if (p == "") {
+    p <- file.path("inst", "extdata", "case_studies", "all_leukemia", name)
+  }
+  p
+}
+
+summary_path <- locate_case_file("summary.json")
+assoc_path <- locate_case_file("phenotype_associations.tsv")
+
+summary_obj <- if (file.exists(summary_path)) jsonlite::fromJSON(summary_path) else NULL
+assoc <- if (file.exists(assoc_path)) read.delim(assoc_path, check.names = FALSE) else NULL
+```
+
+# Background
+
+The Bioconductor `ALL` dataset is a canonical acute lymphoblastic leukemia expression cohort with immunophenotype (`BT`) and molecular subtype labels (`mol.biol`). It is a strong test bed for whether nested co-expression modules capture clinically meaningful leukemia structure.
+
+# Objective
+
+The goal is to test if NestedWGCNA modules are associated with known ALL subtype labels, beyond global gene-expression trends.
+
+# Data source and execution
+
+This tutorial uses real data downloaded through Bioconductor package installation:
+
+- Dataset: `ALL::ALL` ExpressionSet
+- Samples: 128
+- Features (probes): 12,625
+
+Run:
+
+```{r, eval = FALSE}
+system("Rscript inst/scripts/run_all_leukemia_case_study.R")
+```
+
+# Methods
+
+Pipeline settings in this run:
+
+1. Select top 1,200 variable probes.
+2. CGM discovery with `min_cluster_size = 30`.
+3. GenFocus inside the selected CGM.
+4. FGM discovery with requested `min_cluster_size = 8`.
+5. Association testing of module scores against `BT`, `mol.biol`, `sex`, and `age`.
+
+```{r}
+if (!is.null(summary_obj)) {
+  method_tbl <- data.frame(
+    item = c(
+      "samples",
+      "input probes",
+      "modeled probes",
+      "CGM modules",
+      "FGM modules",
+      "GenFocus corr_thr",
+      "GenFocus INGS"
+    ),
+    value = c(
+      summary_obj$n_samples,
+      summary_obj$n_genes_input,
+      summary_obj$n_genes_model,
+      summary_obj$cgm_n_modules,
+      summary_obj$fgm_n_modules,
+      summary_obj$genfocus_corr_thr,
+      summary_obj$genfocus_ings_n
+    )
+  )
+  knitr::kable(method_tbl, caption = "ALL case-study summary")
+}
+```
+
+# Results
+
+```{r}
+if (!is.null(summary_obj)) {
+  res_tbl <- data.frame(
+    layer = c("CGM", "FGM"),
+    modules = c(summary_obj$cgm_n_modules, summary_obj$fgm_n_modules),
+    assigned_genes = c(summary_obj$cgm_assigned_genes, summary_obj$fgm_assigned_genes),
+    noise_genes = c(summary_obj$cgm_noise_genes, summary_obj$fgm_noise_genes)
+  )
+  knitr::kable(res_tbl, caption = "Recovered module structure")
+}
+```
+
+```{r, echo = FALSE, fig.cap = "CGM module size distribution (ALL)"}
+img <- locate_case_file("cgm_module_sizes.png")
+if (file.exists(img)) knitr::include_graphics(img)
+```
+
+```{r, echo = FALSE, fig.cap = "FGM module size distribution (ALL)"}
+img <- locate_case_file("fgm_module_sizes.png")
+if (file.exists(img)) knitr::include_graphics(img)
+```
+
+```{r}
+if (!is.null(assoc) && nrow(assoc) > 0) {
+  top_assoc <- assoc[order(assoc$fdr), c("layer", "module", "phenotype", "test", "effect", "fdr")]
+  top_assoc <- head(top_assoc, 12)
+  knitr::kable(top_assoc, digits = 4, caption = "Top phenotype associations")
+}
+```
+
+Main observation from this run:
+
+- Strong FGM associations with `BT` (immunophenotype) and `mol.biol` (molecular subtype).
+- The strongest association was FGM-level, indicating Stage 2 refinement carries subtype-discriminating information.
+
+# Discussion
+
+In ALL, subtype signal is expected but can be distributed across multiple pathways. The nested design helps by first collecting broad leukemia co-expression structure, then splitting it into finer modules that align more directly with subtype labels.
+
+# Interpretation
+
+For downstream use, CGMs provide a stable high-level representation, while FGMs capture subtype-sensitive variation suitable for stratification tasks. In this run, FGM-level associations with `BT`/`mol.biol` were stronger than coarse-level associations, consistent with the intended purpose of the two-stage method.

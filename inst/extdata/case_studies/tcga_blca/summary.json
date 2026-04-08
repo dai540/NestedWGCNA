@@ -1,0 +1,176 @@
+{
+  "dataset_id": "tcga_blca",
+  "source": "https://raw.githubusercontent.com/ilyada/NestedWGCNA/main/data/TCGA_BLCA.tsv",
+  "random_state": 42,
+  "input_meta": {
+    "input_min_before_shift": 0.0,
+    "shift_applied": 0.0,
+    "log1p_applied": 1.0,
+    "q99_after_shift_before_log": 483.7502410000013
+  },
+  "n_samples": 406,
+  "n_genes_input": 20017,
+  "n_genes_model": 1200,
+  "cgm_min_cluster_size": 50,
+  "cgm_n_modules": 4,
+  "cgm_assigned_genes": 677,
+  "cgm_noise_genes": 523,
+  "target_cgm": 2,
+  "target_cgm_reason": "immune_signature:Macrophages_BLUEPRINT_2",
+  "target_cgm_size": 147,
+  "genfocus_corr_thr": 0.9,
+  "genfocus_ings_n": 30,
+  "fgm_min_cluster_size_requested": 10,
+  "fgm_min_cluster_size_used": 10,
+  "fgm_n_modules": 2,
+  "fgm_assigned_genes": 109,
+  "fgm_noise_genes": 38,
+  "top_cgm_enrichment": [
+    {
+      "module": 3,
+      "source": "xCell",
+      "signature": "Astrocytes_FANTOM_1",
+      "k": 56,
+      "K": 168,
+      "fdr": 4.7986740601012845e-33
+    },
+    {
+      "module": 3,
+      "source": "xCell",
+      "signature": "Astrocytes_FANTOM_3",
+      "k": 50,
+      "K": 168,
+      "fdr": 2.7024626162265515e-30
+    },
+    {
+      "module": 3,
+      "source": "xCell",
+      "signature": "Astrocytes_FANTOM_2",
+      "k": 40,
+      "K": 168,
+      "fdr": 1.1047585401493283e-23
+    },
+    {
+      "module": 1,
+      "source": "xCell",
+      "signature": "Keratinocytes_FANTOM_1",
+      "k": 35,
+      "K": 124,
+      "fdr": 3.992198663469346e-19
+    },
+    {
+      "module": 1,
+      "source": "xCell",
+      "signature": "Keratinocytes_FANTOM_3",
+      "k": 28,
+      "K": 124,
+      "fdr": 1.844637020444733e-16
+    },
+    {
+      "module": 1,
+      "source": "xCell",
+      "signature": "Keratinocytes_FANTOM_2",
+      "k": 27,
+      "K": 124,
+      "fdr": 3.888880268113671e-16
+    },
+    {
+      "module": 2,
+      "source": "xCell",
+      "signature": "Macrophages_BLUEPRINT_3",
+      "k": 15,
+      "K": 147,
+      "fdr": 3.8857978493736475e-13
+    },
+    {
+      "module": 2,
+      "source": "xCell",
+      "signature": "Macrophages_BLUEPRINT_2",
+      "k": 15,
+      "K": 147,
+      "fdr": 3.8857978493736475e-13
+    },
+    {
+      "module": 2,
+      "source": "xCell",
+      "signature": "Macrophages_BLUEPRINT_1",
+      "k": 14,
+      "K": 147,
+      "fdr": 2.310053257823132e-12
+    },
+    {
+      "module": 0,
+      "source": "xCell",
+      "signature": "Neurons_FANTOM_3",
+      "k": 9,
+      "K": 238,
+      "fdr": 0.2642508793072078
+    },
+    {
+      "module": 0,
+      "source": "xCell",
+      "signature": "Epithelial cells_ENCODE_1",
+      "k": 5,
+      "K": 238,
+      "fdr": 0.2642508793072078
+    },
+    {
+      "module": 0,
+      "source": "xCell",
+      "signature": "Epithelial cells_HPCA_1",
+      "k": 4,
+      "K": 238,
+      "fdr": 0.3655649275556114
+    }
+  ],
+  "top_fgm_enrichment": [
+    {
+      "fgm": 0,
+      "source": "xCell",
+      "signature": "Melanocytes_FANTOM_2",
+      "k": 17,
+      "K": 89,
+      "fdr": 9.281453119606849e-12
+    },
+    {
+      "fgm": 0,
+      "source": "xCell",
+      "signature": "Melanocytes_FANTOM_3",
+      "k": 19,
+      "K": 89,
+      "fdr": 9.397313311806768e-12
+    },
+    {
+      "fgm": 1,
+      "source": "xCell",
+      "signature": "CD8+ Tem_BLUEPRINT_3",
+      "k": 8,
+      "K": 20,
+      "fdr": 2.3059955579818576e-11
+    },
+    {
+      "fgm": 1,
+      "source": "xCell",
+      "signature": "CD8+ Tem_HPCA_2",
+      "k": 8,
+      "K": 20,
+      "fdr": 2.3059955579818576e-11
+    },
+    {
+      "fgm": 1,
+      "source": "xCell",
+      "signature": "Tgd cells_HPCA_1",
+      "k": 7,
+      "K": 20,
+      "fdr": 4.0495653421675325e-11
+    },
+    {
+      "fgm": 0,
+      "source": "BostonGene",
+      "signature": "MHCII",
+      "k": 7,
+      "K": 89,
+      "fdr": 3.945225838609865e-08
+    }
+  ]
+}

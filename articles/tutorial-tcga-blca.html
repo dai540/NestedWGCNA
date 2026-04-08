@@ -235,9 +235,24 @@ signatures.</li>
 </div>
 </div>
 <div class="section level3">
-<h3 id="biological-enrichment">Biological enrichment<a class="anchor" aria-label="anchor" href="#biological-enrichment"></a>
+<h3 id="network-diagram">Network diagram<a class="anchor" aria-label="anchor" href="#network-diagram"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu">graphics</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">1.5</span>, <span class="fl">2.8</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">plot_module_corr_network</span><span class="op">(</span><span class="va">cgm_scores</span>, layer <span class="op">=</span> <span class="st">"CGM"</span>, top_n <span class="op">=</span> <span class="fl">12</span>, cor_thr <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
+<span><span class="fu">plot_module_corr_network</span><span class="op">(</span><span class="va">fgm_scores</span>, layer <span class="op">=</span> <span class="st">"FGM"</span>, top_n <span class="op">=</span> <span class="fl">12</span>, cor_thr <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="tutorial-tcga-blca_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="Module-score correlation networks in TCGA-BLCA (CGM and FGM layers)" width="700"><p class="caption">
+Module-score correlation networks in TCGA-BLCA (CGM and FGM layers)
+</p>
+</div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">graphics</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="biological-enrichment">Biological enrichment<a class="anchor" aria-label="anchor" href="#biological-enrichment"></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">cgm_enr</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">cgm_enr</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">cgm_top</span> <span class="op">&lt;-</span> <span class="va">cgm_enr</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">cgm_enr</span><span class="op">$</span><span class="va">fdr</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"module"</span>, <span class="st">"source"</span>, <span class="st">"signature"</span>, <span class="st">"k"</span>, <span class="st">"K"</span>, <span class="st">"fdr"</span><span class="op">)</span><span class="op">]</span></span>
 <span>  <span class="va">cgm_top</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cgm_top</span>, <span class="fl">10</span><span class="op">)</span></span>
@@ -347,7 +362,7 @@ signatures.</li>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">fgm_enr</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fgm_enr</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">fgm_top</span> <span class="op">&lt;-</span> <span class="va">fgm_enr</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">fgm_enr</span><span class="op">$</span><span class="va">fdr</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fgm"</span>, <span class="st">"source"</span>, <span class="st">"signature"</span>, <span class="st">"k"</span>, <span class="st">"K"</span>, <span class="st">"fdr"</span><span class="op">)</span><span class="op">]</span></span>
 <span>  <span class="va">fgm_top</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fgm_top</span>, <span class="fl">10</span><span class="op">)</span></span>
@@ -457,7 +472,61 @@ signatures.</li>
 </tr>
 </tbody>
 </table>
-<p>Observed structure in this run:</p>
+</div>
+<div class="section level3">
+<h3 id="quantitative-readout-and-objective-match">Quantitative readout and objective match<a class="anchor" aria-label="anchor" href="#quantitative-readout-and-objective-match"></a>
+</h3>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">cgm_assign</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">cgm_assign</span><span class="op">$</span><span class="va">cgm</span><span class="op">[</span><span class="va">cgm_assign</span><span class="op">$</span><span class="va">cgm</span> <span class="op">&gt;=</span> <span class="fl">0</span><span class="op">]</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>cgm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span>, genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">size_tbl</span>, <span class="fl">5</span><span class="op">)</span>, caption <span class="op">=</span> <span class="st">"Largest CGMs by gene count"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<table class="table">
+<caption>Largest CGMs by gene count</caption>
+<thead><tr class="header">
+<th align="left">cgm</th>
+<th align="right">genes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">2</td>
+<td align="right">873</td>
+</tr>
+<tr class="even">
+<td align="left">0</td>
+<td align="right">181</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="right">145</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">fgm_assign</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">fgm_assign</span><span class="op">$</span><span class="va">fgm</span><span class="op">[</span><span class="va">fgm_assign</span><span class="op">$</span><span class="va">fgm</span> <span class="op">&gt;=</span> <span class="fl">0</span><span class="op">]</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>fgm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span>, genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">size_tbl</span>, <span class="fl">5</span><span class="op">)</span>, caption <span class="op">=</span> <span class="st">"Largest FGMs by gene count"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<table class="table">
+<caption>Largest FGMs by gene count</caption>
+<thead><tr class="header">
+<th align="left">fgm</th>
+<th align="right">genes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="right">133</td>
+</tr>
+<tr class="even">
+<td align="left">0</td>
+<td align="right">12</td>
+</tr>
+</tbody>
+</table>
+<p>Observed structure in this run (goal-aligned findings):</p>
 <ul>
 <li>CGM-3: strong stromal/mesenchymal program (Astrocytes_FANTOM
 signatures).</li>
@@ -472,34 +541,38 @@ enrichment).</li>
 <li>FGM-1: macrophage-dominant branch (Macrophages_BLUEPRINT
 signatures).</li>
 </ul>
+<p>The objective of separating coarse tumor context from finer immune
+context is met in this dataset. Co-expression structure first resolves
+broad stromal/epithelial/immune programs at CGM level, and then resolves
+immune heterogeneity within the target CGM at FGM level.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="discussion">Discussion<a class="anchor" aria-label="anchor" href="#discussion"></a>
 </h2>
-<p>The two-stage structure is supported by the output:</p>
-<ul>
-<li>Stage 1 recovered broad, high-level tissue programs.</li>
-<li>Stage 2 split the immune-like CGM into a small antigen-presentation
-branch and a larger macrophage branch.</li>
-</ul>
-<p>This is exactly the expected use case for nested co-expression
-analysis in bulk tumors, where immune and stromal signals are often
-superimposed.</p>
+<p>The two-stage structure is supported by three independent views.
+First, module-size distributions show stable coarse partitions with a
+focused immune target module. Second, the module-score network indicates
+non-random module-level connectivity rather than arbitrary partitions.
+Third, enrichment shifts from broad tissue signatures (CGM) to focused
+immune signatures (FGM).</p>
+<p>For TCGA-BLCA bulk profiles, this is important because stromal and
+immune signals are superimposed. A one-stage decomposition can blur
+these effects, while the nested decomposition yields a clearer
+hierarchy.</p>
 </div>
 <div class="section level2">
 <h2 id="interpretation">Interpretation<a class="anchor" aria-label="anchor" href="#interpretation"></a>
 </h2>
-<p>For translational analyses, these outputs can be interpreted as:</p>
-<ul>
-<li>CGM labels: macro-context (stromal vs epithelial vs
-immune-rich).</li>
-<li>FGM labels: within-context immune states that may align with antigen
-presentation or macrophage activity.</li>
-</ul>
-<p>In this run, coexistence of an MHC-II-like FGM and a macrophage-like
-FGM within the same immune CGM suggests heterogeneous
-antigen-presentation and myeloid states across BLCA tumors.</p>
+<p>For translational analyses, CGM labels can be interpreted as
+macro-context modules (stromal-rich, epithelial-rich, immune-rich),
+while FGM labels represent within-context immune states. In this run,
+coexistence of an MHC-II-like branch and a macrophage-dominant branch
+inside the same immune CGM suggests heterogeneity of
+antigen-presentation versus myeloid activity across tumors.</p>
+<p>This layered interpretation is directly actionable for downstream
+studies such as subtype stratification, response association modeling,
+and targeted marker panel design.</p>
 </div>
 <div class="section level2">
 <h2 id="practical-caveats">Practical caveats<a class="anchor" aria-label="anchor" href="#practical-caveats"></a>

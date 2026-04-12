@@ -127,6 +127,8 @@ The package supports two main method modes:
 - [`compute_dissimilarity()`](https://dai540.github.io/NestedWGCNA/reference/compute_dissimilarity.md)
 - [`run_case_study()`](https://dai540.github.io/NestedWGCNA/reference/run_case_study.md)
 - [`module_score()`](https://dai540.github.io/NestedWGCNA/reference/module_score.md)
+- [`plot_module_network()`](https://dai540.github.io/NestedWGCNA/reference/plot_module_network.md)
+- [`plot_module_score_heatmap()`](https://dai540.github.io/NestedWGCNA/reference/plot_module_score_heatmap.md)
 - [`available_case_studies()`](https://dai540.github.io/NestedWGCNA/reference/available_case_studies.md)
 - [`case_study_summary()`](https://dai540.github.io/NestedWGCNA/reference/case_study_summary.md)
 - [`case_study_table()`](https://dai540.github.io/NestedWGCNA/reference/case_study_table.md)
@@ -227,6 +229,10 @@ system("Rscript inst/scripts/run_bladderbatch_case_study.R")
   : GenFocus normalization (R rewrite of Python reference logic)
 - [`module_score()`](https://dai540.github.io/NestedWGCNA/reference/module_score.md)
   : Calculate per-sample module scores
+- [`plot_module_network()`](https://dai540.github.io/NestedWGCNA/reference/plot_module_network.md)
+  : Plot a module-score network
+- [`plot_module_score_heatmap()`](https://dai540.github.io/NestedWGCNA/reference/plot_module_score_heatmap.md)
+  : Plot a module-score correlation heatmap (WGCNA-style)
 - [`run_case_study()`](https://dai540.github.io/NestedWGCNA/reference/run_case_study.md)
   : Run a complete case-study pipeline in R
 - [`summary(`*`<NestedWGCNAResult>`*`)`](https://dai540.github.io/NestedWGCNA/reference/summary.NestedWGCNAResult.md)

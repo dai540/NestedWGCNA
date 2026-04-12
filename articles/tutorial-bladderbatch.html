@@ -343,20 +343,34 @@ continue with direct FGM clustering.</li>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu">graphics</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">1.5</span>, <span class="fl">2.8</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">plot_module_corr_network</span><span class="op">(</span><span class="va">cgm_scores</span>, layer <span class="op">=</span> <span class="st">"CGM"</span>, top_n <span class="op">=</span> <span class="fl">12</span>, cor_thr <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
-<span><span class="fu">plot_module_corr_network</span><span class="op">(</span><span class="va">fgm_scores</span>, layer <span class="op">=</span> <span class="st">"FGM"</span>, top_n <span class="op">=</span> <span class="fl">12</span>, cor_thr <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plot_module_network.html">plot_module_network</a></span><span class="op">(</span><span class="va">cgm_scores</span>, module_sizes <span class="op">=</span> <span class="va">cgm_sizes</span>, layer <span class="op">=</span> <span class="st">"CGM"</span>, top_n <span class="op">=</span> <span class="fl">12</span>, cor_thr <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_module_network.html">plot_module_network</a></span><span class="op">(</span><span class="va">fgm_scores</span>, module_sizes <span class="op">=</span> <span class="va">fgm_sizes</span>, layer <span class="op">=</span> <span class="st">"FGM"</span>, top_n <span class="op">=</span> <span class="fl">12</span>, cor_thr <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="tutorial-bladderbatch_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Module-score correlation networks in bladderbatch (CGM and FGM layers)" width="700"><p class="caption">
-Module-score correlation networks in bladderbatch (CGM and FGM layers)
+<img src="tutorial-bladderbatch_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Force-directed module networks in bladderbatch (CGM and FGM layers)" width="700"><p class="caption">
+Force-directed module networks in bladderbatch (CGM and FGM layers)
 </p>
 </div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">graphics</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_module_score_heatmap.html">plot_module_score_heatmap</a></span><span class="op">(</span><span class="va">cgm_scores</span>, layer <span class="op">=</span> <span class="st">"CGM"</span>, top_n <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="tutorial-bladderbatch_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="WGCNA-style module-score correlation heatmap (CGM layer)" width="700"><p class="caption">
+WGCNA-style module-score correlation heatmap (CGM layer)
+</p>
+</div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_module_score_heatmap.html">plot_module_score_heatmap</a></span><span class="op">(</span><span class="va">fgm_scores</span>, layer <span class="op">=</span> <span class="st">"FGM"</span>, top_n <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="tutorial-bladderbatch_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="WGCNA-style module-score correlation heatmap (FGM layer)" width="700"><p class="caption">
+WGCNA-style module-score correlation heatmap (FGM layer)
+</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="quantitative-readout-and-objective-match">Quantitative readout and objective match<a class="anchor" aria-label="anchor" href="#quantitative-readout-and-objective-match"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">cgm_assign</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">cgm_assign</span><span class="op">$</span><span class="va">cgm</span><span class="op">[</span><span class="va">cgm_assign</span><span class="op">$</span><span class="va">cgm</span> <span class="op">&gt;=</span> <span class="fl">0</span><span class="op">]</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>cgm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span>, genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span><span class="op">)</span></span>
@@ -411,7 +425,7 @@ Module-score correlation networks in bladderbatch (CGM and FGM layers)
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">fgm_assign</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">fgm_assign</span><span class="op">$</span><span class="va">fgm</span><span class="op">[</span><span class="va">fgm_assign</span><span class="op">$</span><span class="va">fgm</span> <span class="op">&gt;=</span> <span class="fl">0</span><span class="op">]</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span>  <span class="va">size_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>fgm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span>, genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">size_tbl</span><span class="op">)</span><span class="op">)</span></span>
@@ -462,7 +476,7 @@ Module-score correlation networks in bladderbatch (CGM and FGM layers)
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">assoc</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">assoc</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">layer_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">assoc</span>, <span class="va">assoc</span><span class="op">$</span><span class="va">layer</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -502,7 +516,7 @@ Module-score correlation networks in bladderbatch (CGM and FGM layers)
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">assoc</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">assoc</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">fgm_assoc</span> <span class="op">&lt;-</span> <span class="va">assoc</span><span class="op">[</span><span class="va">assoc</span><span class="op">$</span><span class="va">layer</span> <span class="op">==</span> <span class="st">"FGM"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"layer"</span>, <span class="st">"module"</span>, <span class="st">"phenotype"</span>, <span class="st">"test"</span>, <span class="st">"effect"</span>, <span class="st">"fdr"</span><span class="op">)</span><span class="op">]</span></span>
 <span>  <span class="va">fgm_assoc</span> <span class="op">&lt;-</span> <span class="va">fgm_assoc</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">fgm_assoc</span><span class="op">$</span><span class="va">fdr</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
@@ -596,7 +610,7 @@ Module-score correlation networks in bladderbatch (CGM and FGM layers)
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">is_empty_tbl</span><span class="op">(</span><span class="va">cgm_enr</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu">is_empty_tbl</span><span class="op">(</span><span class="va">fgm_enr</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -657,6 +671,21 @@ treated as candidate subprograms for validation in larger cohorts or
 matched RNA-seq datasets. The objective is partially achieved: stage 1
 yields strong phenotype coupling, stage 2 adds interpretable but
 currently underpowered fine structure.</p>
+</div>
+<div class="section level2">
+<h2 id="visualization-design-note">Visualization design note<a class="anchor" aria-label="anchor" href="#visualization-design-note"></a>
+</h2>
+<p>The network and heatmap style in this tutorial is aligned with:</p>
+<ul>
+<li>NestedWGCNA project structure and reporting style: <a href="https://github.com/ilyada/NestedWGCNA" class="external-link uri">https://github.com/ilyada/NestedWGCNA</a>
+</li>
+<li>WGCNA eigengene-network visualization
+(<code>plotEigengeneNetworks</code>): <a href="https://rdrr.io/cran/WGCNA/man/plotEigengeneNetworks.html" class="external-link uri">https://rdrr.io/cran/WGCNA/man/plotEigengeneNetworks.html</a>
+</li>
+<li>WGCNA network export practice
+(<code>exportNetworkToCytoscape</code>): <a href="https://rdrr.io/cran/WGCNA/man/exportNetworkToCytoscape.html" class="external-link uri">https://rdrr.io/cran/WGCNA/man/exportNetworkToCytoscape.html</a>
+</li>
+</ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

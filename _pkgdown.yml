@@ -57,6 +57,8 @@ reference:
       - find_fgm
       - genfocus_normalize
       - module_score
+      - plot_module_network
+      - plot_module_score_heatmap
       - run_case_study
       - summary.NestedWGCNAResult
   - title: Network primitives

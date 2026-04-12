@@ -103,6 +103,26 @@ case_study_summary("tcga_blca")$dataset_id
 head(case_study_table("all_leukemia", "phenotype_associations"))
 ```
 
+# Network visualization API
+
+Following WGCNA eigengene-network visualization conventions, the package now
+provides module-network plotting helpers.
+
+```{r}
+tcga_scores <- case_study_table("tcga_blca", "cgm_scores")
+rownames(tcga_scores) <- tcga_scores[[1]]
+tcga_scores <- tcga_scores[, -1, drop = FALSE]
+
+tcga_cgm_assign <- case_study_table("tcga_blca", "cgm_assignments")
+tab <- table(tcga_cgm_assign$cgm[tcga_cgm_assign$cgm >= 0])
+cgm_sizes <- stats::setNames(as.numeric(tab), paste0("CGM_", names(tab)))
+
+op <- graphics::par(mfrow = c(1, 2), mar = c(1.5, 1.5, 2.8, 1))
+plot_module_network(tcga_scores, module_sizes = cgm_sizes, layer = "CGM", top_n = 12, cor_thr = 0.25)
+plot_module_score_heatmap(tcga_scores, layer = "CGM", top_n = 12)
+graphics::par(op)
+```
+
 # Interpretation
 
 Across datasets, CGMs capture high-level programs and FGMs resolve finer substructure within selected CGMs. This is the intended behavior of the nested design and is visible in all three tutorials.

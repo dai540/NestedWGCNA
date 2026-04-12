@@ -109,6 +109,8 @@ The package supports two main method modes:
 - `compute_dissimilarity()`
 - `run_case_study()`
 - `module_score()`
+- `plot_module_network()`
+- `plot_module_score_heatmap()`
 - `available_case_studies()`
 - `case_study_summary()`
 - `case_study_table()`

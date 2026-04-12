@@ -38,6 +38,7 @@ jobs:
             any::knitr
             any::rmarkdown
             any::pkgdown
+            any::igraph
             any::testthat
 
       - name: Document

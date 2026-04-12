@@ -21,6 +21,7 @@ Suggests:
     BiocManager,
     bladderbatch,
     dbscan,
+    igraph,
     knitr,
     matrixStats,
     pkgload,

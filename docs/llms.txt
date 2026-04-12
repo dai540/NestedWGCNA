@@ -35,6 +35,7 @@ pseudobulk-style inputs.
 Install from GitHub:
 
 ``` r
+
 install.packages("pak")
 pak::pak("dai540/NestedWGCNA")
 ```
@@ -42,6 +43,7 @@ pak::pak("dai540/NestedWGCNA")
 Or:
 
 ``` r
+
 install.packages("remotes")
 remotes::install_github("dai540/NestedWGCNA")
 ```
@@ -49,18 +51,21 @@ remotes::install_github("dai540/NestedWGCNA")
 Or install from a source tarball:
 
 ``` r
+
 install.packages("path/to/NestedWGCNA_<version>.tar.gz", repos = NULL, type = "source")
 ```
 
 Then load the package:
 
 ``` r
+
 library(NestedWGCNA)
 ```
 
 Optional dependencies for clustering and tutorials:
 
 ``` r
+
 install.packages(c("uwot", "dbscan", "matrixStats"))
 BiocManager::install(c("ALL", "bladderbatch", "Biobase"))
 ```
@@ -75,6 +80,7 @@ If you use `NestedWGCNA`, cite the package as:
 You can also retrieve the citation from R:
 
 ``` r
+
 citation("NestedWGCNA")
 ```
 
@@ -127,6 +133,8 @@ The package supports two main method modes:
 - [`compute_dissimilarity()`](https://dai540.github.io/NestedWGCNA/reference/compute_dissimilarity.md)
 - [`run_case_study()`](https://dai540.github.io/NestedWGCNA/reference/run_case_study.md)
 - [`module_score()`](https://dai540.github.io/NestedWGCNA/reference/module_score.md)
+- [`plot_module_network()`](https://dai540.github.io/NestedWGCNA/reference/plot_module_network.md)
+- [`plot_module_score_heatmap()`](https://dai540.github.io/NestedWGCNA/reference/plot_module_score_heatmap.md)
 - [`available_case_studies()`](https://dai540.github.io/NestedWGCNA/reference/available_case_studies.md)
 - [`case_study_summary()`](https://dai540.github.io/NestedWGCNA/reference/case_study_summary.md)
 - [`case_study_table()`](https://dai540.github.io/NestedWGCNA/reference/case_study_table.md)
@@ -149,6 +157,7 @@ Each case study generates a stable output layout:
 ## Example
 
 ``` r
+
 library(NestedWGCNA)
 
 set.seed(42)
@@ -183,6 +192,7 @@ The tutorial site is organized around:
 Run the real-data tutorial pipelines:
 
 ``` r
+
 system("Rscript inst/scripts/run_tcga_blca_case_study.R")
 system("Rscript inst/scripts/run_all_leukemia_case_study.R")
 system("Rscript inst/scripts/run_bladderbatch_case_study.R")
@@ -227,6 +237,10 @@ system("Rscript inst/scripts/run_bladderbatch_case_study.R")
   : GenFocus normalization (R rewrite of Python reference logic)
 - [`module_score()`](https://dai540.github.io/NestedWGCNA/reference/module_score.md)
   : Calculate per-sample module scores
+- [`plot_module_network()`](https://dai540.github.io/NestedWGCNA/reference/plot_module_network.md)
+  : Plot a module-score network
+- [`plot_module_score_heatmap()`](https://dai540.github.io/NestedWGCNA/reference/plot_module_score_heatmap.md)
+  : Plot a module-score correlation heatmap (WGCNA-style)
 - [`run_case_study()`](https://dai540.github.io/NestedWGCNA/reference/run_case_study.md)
   : Run a complete case-study pipeline in R
 - [`summary(`*`<NestedWGCNAResult>`*`)`](https://dai540.github.io/NestedWGCNA/reference/summary.NestedWGCNAResult.md)

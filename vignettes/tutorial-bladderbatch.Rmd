@@ -57,70 +57,21 @@ fgm_assign <- read_case_tsv(fgm_assign_path)
 cgm_scores <- read_case_tsv(cgm_scores_path, row_names = TRUE)
 fgm_scores <- read_case_tsv(fgm_scores_path, row_names = TRUE)
 
-plot_module_corr_network <- function(score_df, layer = "CGM", top_n = 12, cor_thr = 0.35) {
-  if (is.null(score_df) || !nrow(score_df) || ncol(score_df) < 2) {
-    plot.new()
-    graphics::text(0.5, 0.5, paste(layer, "network unavailable"))
-    return(invisible(NULL))
+module_size_map <- function(assign_df, module_col, prefix) {
+  if (is.null(assign_df) || !nrow(assign_df) || !module_col %in% colnames(assign_df)) {
+    return(NULL)
   }
-
-  s <- as.matrix(score_df)
-  storage.mode(s) <- "double"
-  vars <- apply(s, 2, stats::var, na.rm = TRUE)
-  vars[!is.finite(vars)] <- 0
-  keep <- order(vars, decreasing = TRUE)[seq_len(min(top_n, ncol(s)))]
-  s <- s[, keep, drop = FALSE]
-  node_names <- colnames(s)
-
-  r <- suppressWarnings(stats::cor(s, method = "spearman", use = "pairwise.complete.obs"))
-  r[!is.finite(r)] <- 0
-  diag(r) <- 0
-
-  edge_idx <- which(abs(r) >= cor_thr, arr.ind = TRUE)
-  edge_idx <- edge_idx[edge_idx[, 1] < edge_idx[, 2], , drop = FALSE]
-  if (!nrow(edge_idx)) {
-    upp <- abs(r[upper.tri(r)])
-    fallback <- if (length(upp)) max(0.2, as.numeric(stats::quantile(upp, probs = 0.85, na.rm = TRUE))) else 1
-    edge_idx <- which(abs(r) >= fallback, arr.ind = TRUE)
-    edge_idx <- edge_idx[edge_idx[, 1] < edge_idx[, 2], , drop = FALSE]
+  ids <- suppressWarnings(as.integer(assign_df[[module_col]]))
+  ids <- ids[is.finite(ids) & ids >= 0]
+  if (!length(ids)) {
+    return(NULL)
   }
-
-  d <- stats::as.dist(1 - abs(r))
-  coords <- try(stats::cmdscale(d, k = 2), silent = TRUE)
-  if (inherits(coords, "try-error") || any(!is.finite(coords))) {
-    th <- seq(0, 2 * pi, length.out = length(node_names) + 1)[-1]
-    coords <- cbind(cos(th), sin(th))
-  }
-  rownames(coords) <- node_names
-  colnames(coords) <- c("x", "y")
-
-  xr <- range(coords[, "x"])
-  yr <- range(coords[, "y"])
-  if (diff(xr) > 0) {
-    coords[, "x"] <- (coords[, "x"] - mean(xr)) / diff(xr) * 2
-  }
-  if (diff(yr) > 0) {
-    coords[, "y"] <- (coords[, "y"] - mean(yr)) / diff(yr) * 2
-  }
-
-  graphics::plot(coords[, "x"], coords[, "y"], type = "n", axes = FALSE, xlab = "", ylab = "",
-                 main = paste0(layer, " module-score network"))
-  if (nrow(edge_idx)) {
-    for (i in seq_len(nrow(edge_idx))) {
-      a <- edge_idx[i, 1]
-      b <- edge_idx[i, 2]
-      w <- r[a, b]
-      edge_col <- if (w >= 0) "#1f77b4AA" else "#d62728AA"
-      graphics::segments(coords[a, "x"], coords[a, "y"], coords[b, "x"], coords[b, "y"],
-                         col = edge_col, lwd = 1 + 4 * abs(w))
-    }
-  }
-  graphics::points(coords[, "x"], coords[, "y"], pch = 21, cex = 1.8, bg = "#f4a261", col = "#264653")
-  graphics::text(coords[, "x"], coords[, "y"], labels = node_names, pos = 3, cex = 0.72)
-  graphics::legend("topright", legend = c("positive", "negative"), col = c("#1f77b4", "#d62728"),
-                   lwd = 2, bty = "n", cex = 0.8)
-  invisible(r)
+  tab <- table(ids)
+  stats::setNames(as.numeric(tab), paste0(prefix, names(tab)))
 }
+
+cgm_sizes <- module_size_map(cgm_assign, "cgm", "CGM_")
+fgm_sizes <- module_size_map(fgm_assign, "fgm", "FGM_")
 ```
 
 # Background
@@ -215,11 +166,19 @@ if (!is.null(assoc) && nrow(assoc) > 0) {
 
 ## Network diagram
 
-```{r, fig.cap = "Module-score correlation networks in bladderbatch (CGM and FGM layers)"}
+```{r, fig.cap = "Force-directed module networks in bladderbatch (CGM and FGM layers)"}
 op <- graphics::par(mfrow = c(1, 2), mar = c(1.5, 1.5, 2.8, 1))
-plot_module_corr_network(cgm_scores, layer = "CGM", top_n = 12, cor_thr = 0.3)
-plot_module_corr_network(fgm_scores, layer = "FGM", top_n = 12, cor_thr = 0.3)
+plot_module_network(cgm_scores, module_sizes = cgm_sizes, layer = "CGM", top_n = 12, cor_thr = 0.25)
+plot_module_network(fgm_scores, module_sizes = fgm_sizes, layer = "FGM", top_n = 12, cor_thr = 0.25)
 graphics::par(op)
+```
+
+```{r, fig.cap = "WGCNA-style module-score correlation heatmap (CGM layer)"}
+plot_module_score_heatmap(cgm_scores, layer = "CGM", top_n = 15)
+```
+
+```{r, fig.cap = "WGCNA-style module-score correlation heatmap (FGM layer)"}
+plot_module_score_heatmap(fgm_scores, layer = "FGM", top_n = 15)
 ```
 
 ## Quantitative readout and objective match
@@ -294,3 +253,11 @@ As with the ALL tutorial, signature enrichment is empty here because the express
 # Interpretation
 
 For bladderbatch, CGMs should be interpreted as primary disease programs and used first for inferential analyses. FGMs are better treated as candidate subprograms for validation in larger cohorts or matched RNA-seq datasets. The objective is partially achieved: stage 1 yields strong phenotype coupling, stage 2 adds interpretable but currently underpowered fine structure.
+
+# Visualization design note
+
+The network and heatmap style in this tutorial is aligned with:
+
+- NestedWGCNA project structure and reporting style: <https://github.com/ilyada/NestedWGCNA>
+- WGCNA eigengene-network visualization (`plotEigengeneNetworks`): <https://rdrr.io/cran/WGCNA/man/plotEigengeneNetworks.html>
+- WGCNA network export practice (`exportNetworkToCytoscape`): <https://rdrr.io/cran/WGCNA/man/exportNetworkToCytoscape.html>

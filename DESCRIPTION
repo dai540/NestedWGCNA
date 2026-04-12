@@ -1,13 +1,12 @@
 Package: NestedWGCNA
-Title: Computation-First Two-Stage Gene Co-Expression Analysis
+Title: Minimal Two-Stage Gene Co-Expression Analysis
 Version: 1.00
 Author: Dai [aut, cre]
-Maintainer: Dai <daiki@example.com>
-Description: Minimal R implementation of a two-stage gene co-expression
-    workflow focused on computation. The package computes adjacency and
-    dissimilarity matrices, discovers coarse-grained modules (CGMs), applies
-    GenFocus normalization, and discovers fine-grained modules (FGMs).
-    No visualization or case-study wrappers are included in this release.
+Maintainer: Dai <dai@example.com>
+Description: Minimal and computation-focused implementation of a two-stage
+    gene co-expression workflow. The package computes gene adjacency and
+    dissimilarity, identifies coarse-grained modules, derives core genes,
+    normalizes expression by module cores, and identifies fine-grained modules.
 License: MIT + file LICENSE
 URL: https://github.com/dai540/NestedWGCNA,
     https://dai540.github.io/NestedWGCNA/
@@ -15,11 +14,11 @@ BugReports: https://github.com/dai540/NestedWGCNA/issues
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
 Suggests:
-    dbscan,
-    matrixStats,
-    testthat (>= 3.0.0),
-    uwot
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
 Config/testthat/edition: 3
+Config/Needs/website: pkgdown
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Config/Needs/website: pkgdown

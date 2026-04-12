@@ -2,19 +2,18 @@
 % Please edit documentation in R/preprocess.R
 \name{clear_data}
 \alias{clear_data}
-\title{Basic cleaning (Python \code{clear_data} equivalent)}
+\title{Clean expression matrix}
 \usage{
-clear_data(x, fillna = NULL)
+clear_data(x, min_samples = 10L)
 }
 \arguments{
-\item{x}{Numeric expression matrix (\verb{samples x genes}).}
+\item{x}{Numeric matrix-like object.}
 
-\item{fillna}{If \code{NULL}, drop genes containing \code{NA}; otherwise fill \code{NA}
-with this value.}
+\item{min_samples}{Minimum sample count after cleaning.}
 }
 \value{
-Cleaned matrix.
+Cleaned numeric matrix.
 }
 \description{
-Basic cleaning (Python \code{clear_data} equivalent)
+Removes genes with non-finite values or zero variance.
 }

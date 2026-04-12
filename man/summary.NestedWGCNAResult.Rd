@@ -2,18 +2,18 @@
 % Please edit documentation in R/methods.R
 \name{summary.NestedWGCNAResult}
 \alias{summary.NestedWGCNAResult}
-\title{Summarize a NestedWGCNA result}
+\title{Summarize nested analysis result}
 \usage{
 \method{summary}{NestedWGCNAResult}(object, ...)
 }
 \arguments{
-\item{object}{A \code{NestedWGCNAResult}.}
+\item{object}{\code{NestedWGCNAResult} object.}
 
 \item{...}{Unused.}
 }
 \value{
-A named list summary.
+A summary list.
 }
 \description{
-Summarize a NestedWGCNA result
+Summarize nested analysis result
 }

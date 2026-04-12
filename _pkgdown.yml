@@ -4,43 +4,45 @@ template:
 
 home:
   title: NestedWGCNA
-  description: Computation-first two-stage gene co-expression analysis in R.
-  sidebar:
-    html: pkgdown/sidebar.html
+  description: Minimal two-stage gene co-expression analysis for R.
+
+navbar:
+  structure:
+    left: [intro, articles, reference]
+    right: [github]
+
+articles:
+  - title: Getting Started
+    navbar: Getting Started
+    contents:
+      - getting-started
+  - title: Guides
+    navbar: Guides
+    contents:
+      - guides
+  - title: Tutorials
+    navbar: Tutorials
+    contents:
+      - tutorials
+  - title: Reference
+    navbar: Reference
+    contents:
+      - reference
 
 reference:
-  - title: Package
-    contents:
-      - NestedWGCNA-package
-
-  - title: End-to-end pipeline
+  - title: Main workflow
     contents:
       - run_nested_wgcna
       - find_cgm
       - find_fgm
-      - genfocus_normalize
       - module_score
-
-  - title: Network primitives
-    contents:
-      - compute_adjacency
-      - compute_dissimilarity
-      - core_decompose_weighted
-      - erode_to_core
-
-  - title: Clustering wrappers
-    contents:
-      - run_gene_umap
-      - run_gene_hdbscan
-
-  - title: Input preprocessing
+  - title: Matrix utilities
     contents:
       - as_expression_matrix
       - clear_data
-      - bootstrap_filter
-      - classification_err
       - top_variable_genes
-
-  - title: Result object
+      - compute_adjacency
+      - compute_dissimilarity
+  - title: Result methods
     contents:
       - summary.NestedWGCNAResult

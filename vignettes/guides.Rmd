@@ -1,0 +1,45 @@
+---
+title: "Guides"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Guides}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Mode selection
+
+- `mode = "paper"`: adjacency = `r^2`.
+- `mode = "python_compat"`: adjacency = `|r|`.
+
+Use the same mode throughout a project to keep downstream interpretation stable.
+
+## Parameter tuning
+
+- `top_n_genes`: controls stage-1 feature space.
+- `min_cgm_size`: controls coarse module granularity.
+- `min_fgm_size`: controls fine module granularity.
+
+Smaller minimum module sizes create more modules but increase fragmentation.
+
+## Lightweight workflow pattern
+
+```{r}
+library(NestedWGCNA)
+set.seed(200)
+x <- matrix(rnorm(50 * 400), nrow = 50, ncol = 400)
+colnames(x) <- paste0("G", seq_len(ncol(x)))
+
+x2 <- top_variable_genes(x, n = 250)
+cgm <- find_cgm(x2, mode = "python_compat", min_cgm_size = 40, keep_matrices = FALSE)
+fgm <- find_fgm(x2, mode = "python_compat", min_fgm_size = 15)
+
+head(cgm$assignment)
+head(fgm$assignment)
+```
+
+This pattern avoids storing heavy intermediate matrices when `keep_matrices = FALSE`.

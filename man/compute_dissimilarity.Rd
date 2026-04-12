@@ -4,22 +4,13 @@
 \alias{compute_dissimilarity}
 \title{Compute dissimilarity matrix}
 \usage{
-compute_dissimilarity(
-  adjacency,
-  method = c("paper_metric", "python_compat", "tom", "mot", "custom"),
-  custom_fun = NULL
-)
+compute_dissimilarity(adjacency)
 }
 \arguments{
-\item{adjacency}{Adjacency matrix.}
-
-\item{method}{One of \code{"paper_metric"}, \code{"python_compat"}, \code{"tom"}, \code{"mot"},
-or \code{"custom"}.}
-
-\item{custom_fun}{Optional function for custom dissimilarity.}
+\item{adjacency}{Square adjacency matrix.}
 }
 \value{
-Gene-gene dissimilarity matrix.
+Gene-by-gene dissimilarity matrix.
 }
 \description{
 Compute dissimilarity matrix

@@ -4,15 +4,15 @@
 \alias{top_variable_genes}
 \title{Select top variable genes}
 \usage{
-top_variable_genes(x, n = 1200)
+top_variable_genes(x, n = 2000L)
 }
 \arguments{
-\item{x}{Expression matrix (\verb{samples x genes}).}
+\item{x}{Numeric matrix-like object.}
 
 \item{n}{Number of genes to keep.}
 }
 \value{
-Matrix with top variable genes.
+Matrix with selected genes.
 }
 \description{
 Select top variable genes

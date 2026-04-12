@@ -1,0 +1,40 @@
+---
+title: "Getting Started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+`NestedWGCNA` is a minimal two-stage co-expression package.
+This page shows the shortest end-to-end run using simulated data only.
+
+```{r}
+library(NestedWGCNA)
+set.seed(100)
+x <- matrix(rnorm(60 * 500), nrow = 60, ncol = 500)
+rownames(x) <- paste0("S", seq_len(nrow(x)))
+colnames(x) <- paste0("G", seq_len(ncol(x)))
+
+res <- run_nested_wgcna(
+  x = x,
+  mode = "paper",
+  min_cgm_size = 50,
+  min_fgm_size = 20,
+  top_n_genes = 300
+)
+
+summary(res)
+head(res$fgm$assignment)
+```
+
+Interpretation:
+
+- CGM represents broad structure from top variable genes.
+- Core-based normalization recenters expression by module baselines.
+- FGM adds finer decomposition after normalization.

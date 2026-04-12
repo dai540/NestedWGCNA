@@ -1,219 +1,277 @@
-#' Calculate per-sample module scores
-#'
-#' @param x Expression matrix (`samples x genes`).
-#' @param assignment Integer module assignment vector for genes (`-1` = noise).
-#' @param prefix Prefix for score column names.
-#'
-#' @return Data frame (`samples x modules`) of module scores.
-#' @export
-module_score <- function(x, assignment, prefix = "M_") {
-  x <- as_expression_matrix(x, require_names = FALSE)
-  a <- as.integer(assignment)
-  if (length(a) != ncol(x)) {
-    stop("`assignment` length must match number of genes in `x`.", call. = FALSE)
+.cluster_by_hclust <- function(dissimilarity, min_module_size) {
+  n_genes <- ncol(dissimilarity)
+  if (n_genes < 2L) {
+    out <- rep(1L, n_genes)
+    names(out) <- colnames(dissimilarity)
+    return(out)
   }
-  out <- list()
-  for (k in sort(unique(a[a >= 0]))) {
-    genes <- which(a == k)
-    if (length(genes) == 0) {
+
+  tree <- stats::hclust(stats::as.dist(dissimilarity), method = "average")
+  k <- max(2L, floor(n_genes / max(2L, as.integer(min_module_size))))
+  k <- min(k, n_genes)
+  modules <- stats::cutree(tree, k = k)
+  modules <- as.integer(modules)
+  names(modules) <- colnames(dissimilarity)
+
+  size_tbl <- table(modules)
+  small_ids <- as.integer(names(size_tbl[size_tbl < as.integer(min_module_size)]))
+  if (length(small_ids) > 0L) {
+    modules[modules %in% small_ids] <- 0L
+  }
+
+  positive <- sort(unique(modules[modules > 0L]))
+  if (length(positive) == 0L) {
+    modules[] <- 1L
+    return(modules)
+  }
+
+  map <- stats::setNames(seq_along(positive), positive)
+  relabeled <- integer(length(modules))
+  relabeled[modules > 0L] <- unname(map[as.character(modules[modules > 0L])])
+  names(relabeled) <- names(modules)
+  relabeled
+}
+
+.select_core_genes <- function(adjacency, modules, core_fraction = 0.25, min_core = 2L) {
+  module_ids <- sort(unique(modules[modules > 0L]))
+  core_list <- vector("list", length(module_ids))
+  names(core_list) <- as.character(module_ids)
+
+  for (id in module_ids) {
+    genes <- names(modules)[modules == id]
+    if (length(genes) == 0L) {
+      core_list[[as.character(id)]] <- character(0)
       next
     }
-    out[[paste0(prefix, k)]] <- row_means(x[, genes, drop = FALSE])
+    if (length(genes) == 1L) {
+      core_list[[as.character(id)]] <- genes
+      next
+    }
+    sub_adj <- adjacency[genes, genes, drop = FALSE]
+    connectivity <- rowSums(sub_adj) - 1
+    n_core <- min(length(genes), max(as.integer(min_core), floor(length(genes) * core_fraction)))
+    core_list[[as.character(id)]] <- names(sort(connectivity, decreasing = TRUE))[seq_len(n_core)]
   }
-  if (length(out) == 0) {
-    return(data.frame(row.names = rownames(x)))
+
+  core_df <- do.call(
+    rbind,
+    lapply(names(core_list), function(id) {
+      genes <- core_list[[id]]
+      if (length(genes) == 0L) {
+        return(NULL)
+      }
+      data.frame(
+        gene = genes,
+        module = as.integer(id),
+        stringsAsFactors = FALSE
+      )
+    })
+  )
+  if (is.null(core_df)) {
+    core_df <- data.frame(gene = character(0), module = integer(0))
   }
-  as.data.frame(out, check.names = FALSE)
+
+  list(core_genes_by_module = core_list, assignment = core_df)
 }
 
-#' Discover FGMs inside a CGM
+.normalize_by_core <- function(x, modules, core_genes_by_module) {
+  x_norm <- x
+  module_ids <- sort(unique(modules[modules > 0L]))
+
+  for (id in module_ids) {
+    genes <- names(modules)[modules == id]
+    cores <- core_genes_by_module[[as.character(id)]]
+    cores <- intersect(cores, colnames(x_norm))
+    genes <- intersect(genes, colnames(x_norm))
+    if (length(cores) == 0L || length(genes) == 0L) {
+      next
+    }
+    baseline <- rowMeans(x_norm[, cores, drop = FALSE])
+    x_norm[, genes] <- sweep(x_norm[, genes, drop = FALSE], 1L, baseline, "-")
+  }
+
+  x_norm
+}
+
+#' Find coarse-grained modules (CGM)
 #'
-#' @param x Expression matrix (`samples x genes`) for a single target CGM.
+#' @param x Numeric matrix-like object.
 #' @param mode Similarity mode.
-#' @param min_cluster_size Minimum FGM cluster size.
-#' @param genfocus_corr_method Correlation method for GenFocus.
-#' @param genfocus_corr_thr Correlation threshold for INGS.
-#' @param genfocus_CVR_thr CVR clipping threshold.
-#' @param seed Random seed.
+#' @param min_cgm_size Minimum module size.
+#' @param top_n_genes Number of high-variance genes used for CGM.
+#' @param corr_method Correlation method.
+#' @param keep_matrices If `TRUE`, include adjacency and dissimilarity in output.
+#' @return List with CGM assignments.
+#' @export
+find_cgm <- function(
+  x,
+  mode = c("paper", "python_compat"),
+  min_cgm_size = 100L,
+  top_n_genes = 2000L,
+  corr_method = c("pearson", "spearman"),
+  keep_matrices = FALSE
+) {
+  mode <- match.arg(mode)
+  corr_method <- match.arg(corr_method)
+
+  x_use <- top_variable_genes(x, n = top_n_genes)
+  adj <- compute_adjacency(x_use, mode = mode, method = corr_method)
+  dis <- compute_dissimilarity(adj)
+  modules <- .cluster_by_hclust(dis, min_module_size = min_cgm_size)
+
+  out <- list(
+    assignment = data.frame(
+      gene = names(modules),
+      module = as.integer(modules),
+      stringsAsFactors = FALSE
+    ),
+    module_vector = modules,
+    matrix = x_use
+  )
+  if (isTRUE(keep_matrices)) {
+    out$adjacency <- adj
+    out$dissimilarity <- dis
+  }
+  out
+}
+
+#' Find fine-grained modules (FGM)
 #'
-#' @return List with FGM assignments and normalization output.
+#' @param x Numeric matrix-like object.
+#' @param mode Similarity mode.
+#' @param min_fgm_size Minimum module size.
+#' @param corr_method Correlation method.
+#' @param keep_matrices If `TRUE`, include adjacency and dissimilarity in output.
+#' @return List with FGM assignments.
 #' @export
 find_fgm <- function(
-    x,
-    mode = c("paper", "python_compat"),
-    min_cluster_size = 10,
-    genfocus_corr_method = c("spearman", "pearson"),
-    genfocus_corr_thr = 0.9,
-    genfocus_CVR_thr = 0.6,
-    seed = 42) {
+  x,
+  mode = c("paper", "python_compat"),
+  min_fgm_size = 20L,
+  corr_method = c("pearson", "spearman"),
+  keep_matrices = FALSE
+) {
   mode <- match.arg(mode)
-  genfocus_corr_method <- match.arg(genfocus_corr_method)
-  x <- as_expression_matrix(x, require_names = FALSE)
+  corr_method <- match.arg(corr_method)
 
-  thresholds <- unique(c(genfocus_corr_thr, 0.85, 0.8, 0.75, 0.7))
-  gf <- NULL
-  used_thr <- NA_real_
-  for (thr in thresholds) {
-    gf <- genfocus_normalize(
-      x = x,
-      focus = "eigengene",
-      corr_method = genfocus_corr_method,
-      input_scale = "tpm",
-      corr_thr = thr,
-      CVR_thr = genfocus_CVR_thr
-    )
-    if (!is.null(gf)) {
-      used_thr <- thr
-      break
-    }
-  }
-  if (is.null(gf)) {
-    # Fallback: if GenFocus cannot establish INGS, run FGM clustering on the
-    # original CGM expression matrix to keep the second-stage decomposition usable.
-    fallback <- find_cgm(
-      x = x,
-      mode = mode,
-      corr_method = "pearson",
-      min_cluster_size = min_cluster_size,
-      n_components = as.integer(round(log2(nrow(x)), 0) + 1),
-      seed = seed
-    )
-    fallback <- c(
-      fallback,
-      list(
-        genfocus = NULL,
-        genfocus_corr_thr_used = NA_real_
-      )
-    )
-    return(fallback)
-  }
+  x_use <- clear_data(x, min_samples = 2L)
+  adj <- compute_adjacency(x_use, mode = mode, method = corr_method)
+  dis <- compute_dissimilarity(adj)
+  modules <- .cluster_by_hclust(dis, min_module_size = min_fgm_size)
 
-  cgm2 <- find_cgm(
-    x = gf$normalized_matrix,
-    mode = mode,
-    corr_method = "pearson",
-    min_cluster_size = min_cluster_size,
-    n_components = as.integer(round(log2(nrow(x)), 0) + 1),
-    seed = seed
+  out <- list(
+    assignment = data.frame(
+      gene = names(modules),
+      module = as.integer(modules),
+      stringsAsFactors = FALSE
+    ),
+    module_vector = modules
   )
-  cgm2$genfocus <- gf
-  cgm2$genfocus_corr_thr_used <- used_thr
-  cgm2
+  if (isTRUE(keep_matrices)) {
+    out$adjacency <- adj
+    out$dissimilarity <- dis
+  }
+  out
 }
 
-#' Run NestedWGCNA end-to-end
+#' Compute module scores
 #'
-#' @param x Expression matrix (`samples x genes`).
+#' @param x Numeric matrix-like object.
+#' @param assignments Named integer vector or data frame with `gene` and `module`.
+#' @return Sample-by-module score matrix.
+#' @export
+module_score <- function(x, assignments) {
+  x <- as_expression_matrix(x)
+
+  if (is.data.frame(assignments)) {
+    if (!all(c("gene", "module") %in% colnames(assignments))) {
+      stop("`assignments` data.frame must contain `gene` and `module`.")
+    }
+    modules <- stats::setNames(as.integer(assignments$module), assignments$gene)
+  } else {
+    modules <- as.integer(assignments)
+    names(modules) <- names(assignments)
+  }
+
+  modules <- modules[modules > 0L]
+  modules <- modules[names(modules) %in% colnames(x)]
+  module_ids <- sort(unique(modules))
+
+  if (length(module_ids) == 0L) {
+    return(matrix(numeric(0), nrow = nrow(x), ncol = 0L))
+  }
+
+  score <- matrix(NA_real_, nrow = nrow(x), ncol = length(module_ids))
+  rownames(score) <- rownames(x)
+  colnames(score) <- paste0("M", module_ids)
+
+  for (i in seq_along(module_ids)) {
+    id <- module_ids[i]
+    genes <- names(modules)[modules == id]
+    score[, i] <- rowMeans(x[, genes, drop = FALSE])
+  }
+
+  score
+}
+
+#' Run nested two-stage workflow
+#'
+#' @param x Numeric matrix-like object (`samples x genes`).
 #' @param mode Similarity mode.
-#' @param min_cgm_size Minimum CGM cluster size.
-#' @param min_fgm_size Minimum FGM cluster size.
-#' @param corr_method Correlation method for CGM stage.
-#' @param genfocus_corr_method Correlation method for GenFocus.
-#' @param target_cgm Optional target CGM id for FGM stage. If `NULL`, uses
-#'   largest non-noise CGM.
-#' @param top_n_genes Optional variable-gene filter size.
-#' @param seed Random seed.
-#'
+#' @param min_cgm_size Minimum CGM size.
+#' @param min_fgm_size Minimum FGM size.
+#' @param top_n_genes Number of genes used in stage 1.
+#' @param corr_method Correlation method.
 #' @return Object of class `NestedWGCNAResult`.
 #' @export
 run_nested_wgcna <- function(
-    x,
-    mode = c("paper", "python_compat"),
-    min_cgm_size = 100,
-    min_fgm_size = 10,
-    corr_method = c("pearson", "spearman"),
-    genfocus_corr_method = c("spearman", "pearson"),
-    target_cgm = NULL,
-    top_n_genes = NULL,
-    seed = 42) {
+  x,
+  mode = c("paper", "python_compat"),
+  min_cgm_size = 100L,
+  min_fgm_size = 20L,
+  top_n_genes = 2000L,
+  corr_method = c("pearson", "spearman")
+) {
   mode <- match.arg(mode)
   corr_method <- match.arg(corr_method)
-  genfocus_corr_method <- match.arg(genfocus_corr_method)
-
-  x0 <- as_expression_matrix(x, require_names = FALSE)
-  x1 <- clear_data(x0)
-  if (!is.null(top_n_genes)) {
-    x1 <- top_variable_genes(x1, n = as.integer(top_n_genes))
-  }
+  x_clean <- clear_data(x, min_samples = 2L)
 
   cgm <- find_cgm(
-    x = x1,
+    x = x_clean,
     mode = mode,
+    min_cgm_size = min_cgm_size,
+    top_n_genes = top_n_genes,
     corr_method = corr_method,
-    min_cluster_size = min_cgm_size,
-    seed = seed
+    keep_matrices = TRUE
   )
-  cgm_assign <- cgm$clusters
 
-  if (is.null(target_cgm)) {
-    non_noise <- cgm_assign[cgm_assign >= 0]
-    if (length(non_noise) == 0) {
-      target_cgm <- -1L
-    } else {
-      target_cgm <- as.integer(names(sort(table(non_noise), decreasing = TRUE)[1]))
-    }
-  }
+  core <- .select_core_genes(cgm$adjacency, cgm$module_vector)
+  x_norm <- .normalize_by_core(cgm$matrix, cgm$module_vector, core$core_genes_by_module)
 
-  if (target_cgm < 0) {
-    fgm <- list(
-      clusters = rep(-1L, ncol(x1)),
-      core_clusters = rep(-1L, ncol(x1)),
-      embedding = matrix(NA_real_, nrow = ncol(x1), ncol = 2),
-      genfocus = NULL,
-      genfocus_corr_thr_used = NA_real_
-    )
-    fgm_assign_full <- rep(-1L, ncol(x1))
-    fgm_core_full <- rep(-1L, ncol(x1))
-    names(fgm_assign_full) <- colnames(x1)
-    names(fgm_core_full) <- colnames(x1)
-  } else {
-    target_idx <- which(cgm_assign == target_cgm)
-    target_expr <- x1[, target_idx, drop = FALSE]
-    fgm <- find_fgm(
-      x = target_expr,
-      mode = mode,
-      min_cluster_size = min_fgm_size,
-      genfocus_corr_method = genfocus_corr_method,
-      seed = seed
-    )
-    fgm_assign_full <- rep(-1L, ncol(x1))
-    fgm_core_full <- rep(-1L, ncol(x1))
-    fgm_assign_full[target_idx] <- fgm$clusters
-    fgm_core_full[target_idx] <- fgm$core_clusters
-    names(fgm_assign_full) <- colnames(x1)
-    names(fgm_core_full) <- colnames(x1)
-  }
+  fgm <- find_fgm(
+    x = x_norm,
+    mode = mode,
+    min_fgm_size = min_fgm_size,
+    corr_method = corr_method,
+    keep_matrices = FALSE
+  )
 
-  cgm_scores <- module_score(x1, cgm_assign, prefix = "CGM_")
-  fgm_scores <- module_score(x1, fgm_assign_full, prefix = "FGM_")
-
-  res <- list(
-    input_info = list(n_samples = nrow(x1), n_genes = ncol(x1)),
+  out <- list(
+    input = list(n_samples = nrow(x_clean), n_genes = ncol(x_clean)),
     params = list(
       mode = mode,
-      min_cgm_size = min_cgm_size,
-      min_fgm_size = min_fgm_size,
-      corr_method = corr_method,
-      genfocus_corr_method = genfocus_corr_method,
-      genfocus_corr_thr_used = fgm[["genfocus_corr_thr_used", exact = TRUE]],
-      target_cgm = target_cgm,
-      top_n_genes = top_n_genes
+      min_cgm_size = as.integer(min_cgm_size),
+      min_fgm_size = as.integer(min_fgm_size),
+      top_n_genes = as.integer(top_n_genes),
+      corr_method = corr_method
     ),
-    cgm = list(
-      assignment = stats::setNames(cgm_assign, colnames(x1)),
-      core_assignment = stats::setNames(cgm$core_clusters, colnames(x1)),
-      embedding = cgm$embedding
-    ),
-    fgm = list(
-      assignment = fgm_assign_full,
-      core_assignment = fgm_core_full,
-      embedding = fgm$embedding
-    ),
-    genfocus = fgm[["genfocus", exact = TRUE]],
-    module_scores = list(cgm = cgm_scores, fgm = fgm_scores),
-    call = match.call(),
-    seed = seed
+    cgm = list(assignment = cgm$assignment),
+    cgm_core = core$assignment,
+    normalized_matrix = x_norm,
+    fgm = list(assignment = fgm$assignment),
+    module_scores = module_score(x_norm, fgm$module_vector),
+    call = match.call()
   )
-  class(res) <- "NestedWGCNAResult"
-  res
+  class(out) <- "NestedWGCNAResult"
+  out
 }

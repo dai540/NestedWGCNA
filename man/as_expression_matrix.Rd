@@ -2,19 +2,16 @@
 % Please edit documentation in R/preprocess.R
 \name{as_expression_matrix}
 \alias{as_expression_matrix}
-\title{Coerce input to numeric expression matrix}
+\title{Coerce input to expression matrix}
 \usage{
-as_expression_matrix(x, require_names = TRUE)
+as_expression_matrix(x)
 }
 \arguments{
-\item{x}{Matrix-like object (\code{matrix} or \code{data.frame}) with rows as samples
-and columns as genes.}
-
-\item{require_names}{If \code{TRUE}, requires row and column names.}
+\item{x}{Numeric matrix-like object with samples in rows and genes in columns.}
 }
 \value{
 Numeric matrix.
 }
 \description{
-Coerce input to numeric expression matrix
+Coerce input to expression matrix
 }

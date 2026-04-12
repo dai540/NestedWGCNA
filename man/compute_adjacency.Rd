@@ -6,25 +6,19 @@
 \usage{
 compute_adjacency(
   x,
-  method = c("pearson", "spearman"),
-  mode = c("paper", "python_compat", "custom"),
-  signed = FALSE,
-  power = NULL
+  mode = c("paper", "python_compat"),
+  method = c("pearson", "spearman")
 )
 }
 \arguments{
-\item{x}{Expression matrix (\verb{samples x genes}).}
+\item{x}{Numeric matrix-like object with samples in rows and genes in columns.}
 
-\item{method}{Correlation method (\code{"pearson"} or \code{"spearman"}).}
+\item{mode}{\code{paper} for \code{r^2}, \code{python_compat} for \verb{|r|}.}
 
-\item{mode}{Similarity mode: \code{"paper"}, \code{"python_compat"}, or \code{"custom"}.}
-
-\item{signed}{Whether to use signed adjacency.}
-
-\item{power}{Optional power parameter. If \code{NULL}, defaults by mode.}
+\item{method}{Correlation method.}
 }
 \value{
-Gene-gene adjacency matrix.
+Gene-by-gene adjacency matrix.
 }
 \description{
 Compute adjacency matrix

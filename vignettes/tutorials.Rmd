@@ -1,0 +1,71 @@
+---
+title: "Tutorials"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorials}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Background
+
+In nested co-expression workflows, the first stage captures broad gene
+organization and the second stage refines local structure after normalization.
+
+## Objective
+
+Run an end-to-end two-stage analysis without downloading any external data,
+while preserving a realistic analysis pattern.
+
+## Data
+
+```{r}
+library(NestedWGCNA)
+set.seed(300)
+n_samples <- 80
+n_genes <- 600
+x <- matrix(rnorm(n_samples * n_genes, sd = 0.8), nrow = n_samples, ncol = n_genes)
+rownames(x) <- paste0("S", seq_len(n_samples))
+colnames(x) <- paste0("G", seq_len(n_genes))
+```
+
+## Analysis
+
+```{r}
+res <- run_nested_wgcna(
+  x = x,
+  mode = "paper",
+  min_cgm_size = 60,
+  min_fgm_size = 20,
+  top_n_genes = 350
+)
+
+s <- summary(res)
+s
+```
+
+```{r}
+table(res$cgm$assignment$module)
+table(res$fgm$assignment$module)
+dim(res$module_scores)
+```
+
+## Results
+
+- CGM and FGM assignments are both produced from the same input matrix.
+- Core genes are selected per CGM and stored in `res$cgm_core`.
+- Module scores are returned as a compact sample-by-module matrix.
+
+## Discussion
+
+This minimal implementation prioritizes reproducible computation and low package
+weight. It does not include heavy visualization or enrichment modules.
+
+## Interpretation
+
+The output object is designed so that downstream analyses can consume module
+assignments and module scores directly without carrying large raw artifacts.

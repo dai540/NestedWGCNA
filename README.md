@@ -1,20 +1,40 @@
 # NestedWGCNA
 
-[![R-CMD-check](https://github.com/dai540/NestedWGCNA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dai540/NestedWGCNA/actions/workflows/R-CMD-check.yaml)
-[![pkgdown](https://github.com/dai540/NestedWGCNA/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/dai540/NestedWGCNA/actions/workflows/pkgdown.yaml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+`NestedWGCNA` is a minimal R package for **two-stage gene co-expression analysis**.
+It is intentionally rebuilt from scratch with a strict small-footprint policy:
+only computation-focused code is kept, heavy bundled data is removed, and the
+directory layout is minimized.
 
-`NestedWGCNA` is a computation-first R package for two-stage gene co-expression analysis.
-This release is intentionally minimal: it focuses on network construction, module discovery,
-and nested decomposition only.
+## Package Scope
 
-Website: https://dai540.github.io/NestedWGCNA/
+This package focuses only on the core computational path:
 
-## Design policy (v1.00)
+1. Build a gene-gene adjacency matrix from a sample-by-gene matrix.
+2. Convert adjacency to a dissimilarity matrix.
+3. Detect **coarse-grained modules (CGM)**.
+4. Select module core genes by within-module connectivity.
+5. Normalize expression by module core baselines.
+6. Detect **fine-grained modules (FGM)** on normalized expression.
+7. Calculate module scores.
 
-- Focus only on computation.
-- No visualization helpers in the package API.
-- No bundled case-study pipelines or tutorial data.
+Excluded by design:
+
+- Large demo or real datasets.
+- Plot-heavy helper APIs.
+- Domain-specific downstream analyses (enrichment, survival, etc.).
+
+## Design Principles
+
+- Minimal dependencies (base R + `stats`).
+- Deterministic and lightweight defaults.
+- Clear input contract: matrix shape is `samples x genes`.
+- Explicit reproducibility modes:
+  - `mode = "paper"` uses `r^2` adjacency.
+  - `mode = "python_compat"` uses `|r|` adjacency.
+- Small repository size:
+  - No bundled bulky files.
+  - No downloaded external datasets.
+  - No committed build artifacts (`*.tar.gz`, `*.Rcheck`, `tmp_*`, generated `docs/`).
 
 ## Installation
 
@@ -23,46 +43,87 @@ install.packages("remotes")
 remotes::install_github("dai540/NestedWGCNA")
 ```
 
-## Core functions
+## Input Requirements
 
+- Numeric matrix or data frame.
+- Rows are samples (or cells), columns are genes.
+- At least 2 samples and 2 genes.
+- Constant or non-finite genes are removed by `clear_data()`.
+
+## Main API
+
+- `as_expression_matrix()`
+- `clear_data()`
+- `top_variable_genes()`
 - `compute_adjacency()`
 - `compute_dissimilarity()`
-- `run_gene_umap()`
-- `run_gene_hdbscan()`
-- `core_decompose_weighted()`
-- `erode_to_core()`
 - `find_cgm()`
-- `genfocus_normalize()`
 - `find_fgm()`
-- `run_nested_wgcna()`
 - `module_score()`
+- `run_nested_wgcna()`
 
-## Minimal example
+## Quick Start
 
 ```r
 library(NestedWGCNA)
 
-set.seed(42)
+set.seed(1)
 x <- matrix(
-  abs(rnorm(80 * 400)),
+  rnorm(80 * 600),
   nrow = 80,
-  ncol = 400,
-  dimnames = list(paste0("S", 1:80), paste0("G", 1:400))
+  ncol = 600,
+  dimnames = list(paste0("S", seq_len(80)), paste0("G", seq_len(600)))
 )
 
 res <- run_nested_wgcna(
   x = x,
   mode = "paper",
-  min_cgm_size = 30,
-  min_fgm_size = 10,
-  top_n_genes = 300,
-  seed = 42
+  min_cgm_size = 60,
+  min_fgm_size = 20,
+  top_n_genes = 400
 )
 
 summary(res)
+head(res$fgm$assignment)
 ```
 
-## Reproducibility modes
+## Output Object
 
-- `mode = "paper"`: adjacency `r^2`, dissimilarity `sqrt(1 - r^2)`
-- `mode = "python_compat"`: adjacency `|r|`, dissimilarity `sqrt(1 - |r|)`
+`run_nested_wgcna()` returns an object of class `NestedWGCNAResult` containing:
+
+- `input`: cleaned matrix dimensions.
+- `params`: run parameters.
+- `cgm`: CGM assignments and matrices.
+- `cgm_core`: selected core genes per CGM.
+- `normalized_matrix`: core-normalized matrix.
+- `fgm`: FGM assignments and matrices.
+- `module_scores`: sample-level module score matrix.
+
+## pkgdown Documentation Structure
+
+This package includes pkgdown configuration with four article groups:
+
+- Getting Started
+- Guides
+- Tutorials
+- Reference
+
+Each group has at least one article in `vignettes/`, and the function reference
+is generated from roxygen documentation.
+
+## Reproducibility Notes
+
+- Clustering is performed with base `hclust` to keep dependency and runtime cost low.
+- Module labels are deterministic for fixed input and parameters.
+- This package does not download data automatically.
+
+## Minimal Directory Policy
+
+The repository is intentionally small and contains only files needed for:
+
+- package build/check,
+- test execution,
+- pkgdown configuration,
+- concise vignettes based on simulated data.
+
+Temporary files and build artifacts are excluded by `.gitignore`.

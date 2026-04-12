@@ -2,36 +2,30 @@
 % Please edit documentation in R/pipeline.R
 \name{find_fgm}
 \alias{find_fgm}
-\title{Discover FGMs inside a CGM}
+\title{Find fine-grained modules (FGM)}
 \usage{
 find_fgm(
   x,
   mode = c("paper", "python_compat"),
-  min_cluster_size = 10,
-  genfocus_corr_method = c("spearman", "pearson"),
-  genfocus_corr_thr = 0.9,
-  genfocus_CVR_thr = 0.6,
-  seed = 42
+  min_fgm_size = 20L,
+  corr_method = c("pearson", "spearman"),
+  keep_matrices = FALSE
 )
 }
 \arguments{
-\item{x}{Expression matrix (\verb{samples x genes}) for a single target CGM.}
+\item{x}{Numeric matrix-like object.}
 
 \item{mode}{Similarity mode.}
 
-\item{min_cluster_size}{Minimum FGM cluster size.}
+\item{min_fgm_size}{Minimum module size.}
 
-\item{genfocus_corr_method}{Correlation method for GenFocus.}
+\item{corr_method}{Correlation method.}
 
-\item{genfocus_corr_thr}{Correlation threshold for INGS.}
-
-\item{genfocus_CVR_thr}{CVR clipping threshold.}
-
-\item{seed}{Random seed.}
+\item{keep_matrices}{If \code{TRUE}, include adjacency and dissimilarity in output.}
 }
 \value{
-List with FGM assignments and normalization output.
+List with FGM assignments.
 }
 \description{
-Discover FGMs inside a CGM
+Find fine-grained modules (FGM)
 }

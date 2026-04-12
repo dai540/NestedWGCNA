@@ -2,20 +2,18 @@
 % Please edit documentation in R/pipeline.R
 \name{module_score}
 \alias{module_score}
-\title{Calculate per-sample module scores}
+\title{Compute module scores}
 \usage{
-module_score(x, assignment, prefix = "M_")
+module_score(x, assignments)
 }
 \arguments{
-\item{x}{Expression matrix (\verb{samples x genes}).}
+\item{x}{Numeric matrix-like object.}
 
-\item{assignment}{Integer module assignment vector for genes (\code{-1} = noise).}
-
-\item{prefix}{Prefix for score column names.}
+\item{assignments}{Named integer vector or data frame with \code{gene} and \code{module}.}
 }
 \value{
-Data frame (\verb{samples x modules}) of module scores.
+Sample-by-module score matrix.
 }
 \description{
-Calculate per-sample module scores
+Compute module scores
 }

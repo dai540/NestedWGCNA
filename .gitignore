@@ -3,3 +3,6 @@
 .Rproj.user/
 *.Rcheck/
 ..Rcheck/
+*.tar.gz
+tmp_*
+docs/

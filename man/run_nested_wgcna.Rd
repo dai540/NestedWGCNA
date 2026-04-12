@@ -2,43 +2,33 @@
 % Please edit documentation in R/pipeline.R
 \name{run_nested_wgcna}
 \alias{run_nested_wgcna}
-\title{Run NestedWGCNA end-to-end}
+\title{Run nested two-stage workflow}
 \usage{
 run_nested_wgcna(
   x,
   mode = c("paper", "python_compat"),
-  min_cgm_size = 100,
-  min_fgm_size = 10,
-  corr_method = c("pearson", "spearman"),
-  genfocus_corr_method = c("spearman", "pearson"),
-  target_cgm = NULL,
-  top_n_genes = NULL,
-  seed = 42
+  min_cgm_size = 100L,
+  min_fgm_size = 20L,
+  top_n_genes = 2000L,
+  corr_method = c("pearson", "spearman")
 )
 }
 \arguments{
-\item{x}{Expression matrix (\verb{samples x genes}).}
+\item{x}{Numeric matrix-like object (\verb{samples x genes}).}
 
 \item{mode}{Similarity mode.}
 
-\item{min_cgm_size}{Minimum CGM cluster size.}
+\item{min_cgm_size}{Minimum CGM size.}
 
-\item{min_fgm_size}{Minimum FGM cluster size.}
+\item{min_fgm_size}{Minimum FGM size.}
 
-\item{corr_method}{Correlation method for CGM stage.}
+\item{top_n_genes}{Number of genes used in stage 1.}
 
-\item{genfocus_corr_method}{Correlation method for GenFocus.}
-
-\item{target_cgm}{Optional target CGM id for FGM stage. If \code{NULL}, uses
-largest non-noise CGM.}
-
-\item{top_n_genes}{Optional variable-gene filter size.}
-
-\item{seed}{Random seed.}
+\item{corr_method}{Correlation method.}
 }
 \value{
 Object of class \code{NestedWGCNAResult}.
 }
 \description{
-Run NestedWGCNA end-to-end
+Run nested two-stage workflow
 }

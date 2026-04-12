@@ -2,12 +2,11 @@
 % Please edit documentation in R/NestedWGCNA-package.R
 \docType{package}
 \name{NestedWGCNA-package}
-\alias{NestedWGCNA-package}
 \alias{NestedWGCNA}
+\alias{NestedWGCNA-package}
 \title{NestedWGCNA}
 \description{
-Computation-first two-stage gene co-expression analysis with coarse-grained
-and fine-grained module discovery.
+Minimal two-stage gene co-expression analysis in R.
 }
 \seealso{
 Useful links:
@@ -17,6 +16,4 @@ Useful links:
 }
 
 }
-\author{
-Dai
-}
+\keyword{internal}

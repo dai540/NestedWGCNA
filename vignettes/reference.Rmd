@@ -1,0 +1,52 @@
+---
+title: "Reference"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Function map
+
+### Input and cleaning
+
+- `as_expression_matrix()`
+- `clear_data()`
+- `top_variable_genes()`
+
+### Similarity and dissimilarity
+
+- `compute_adjacency()`
+- `compute_dissimilarity()`
+
+### Two-stage module inference
+
+- `find_cgm()`
+- `find_fgm()`
+- `run_nested_wgcna()`
+
+### Downstream compact outputs
+
+- `module_score()`
+- `summary()` for `NestedWGCNAResult`
+
+## Result schema
+
+```{r}
+library(NestedWGCNA)
+set.seed(400)
+x <- matrix(rnorm(40 * 200), nrow = 40, ncol = 200)
+colnames(x) <- paste0("G", seq_len(ncol(x)))
+res <- run_nested_wgcna(x, min_cgm_size = 30, min_fgm_size = 10, top_n_genes = 150)
+names(res)
+```
+
+## Notes
+
+This package intentionally keeps the public API short and avoids optional heavy
+subsystems to maintain a small footprint.

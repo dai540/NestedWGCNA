@@ -1,101 +1,65 @@
-#' Coerce input to numeric expression matrix
+#' Coerce input to expression matrix
 #'
-#' @param x Matrix-like object (`matrix` or `data.frame`) with rows as samples
-#'   and columns as genes.
-#' @param require_names If `TRUE`, requires row and column names.
-#'
+#' @param x Numeric matrix-like object with samples in rows and genes in columns.
 #' @return Numeric matrix.
 #' @export
-as_expression_matrix <- function(x, require_names = TRUE) {
+as_expression_matrix <- function(x) {
   if (is.data.frame(x)) {
     x <- as.matrix(x)
   }
   if (!is.matrix(x)) {
-    stop("`x` must be a matrix or data.frame.", call. = FALSE)
+    stop("`x` must be a matrix or data.frame.")
   }
   storage.mode(x) <- "double"
-
-  if (require_names) {
-    if (is.null(rownames(x))) {
-      stop("`x` must have rownames (sample ids).", call. = FALSE)
-    }
-    if (is.null(colnames(x))) {
-      stop("`x` must have colnames (gene ids).", call. = FALSE)
-    }
+  if (nrow(x) < 2L || ncol(x) < 2L) {
+    stop("`x` must have at least 2 rows and 2 columns.")
   }
-
-  if (nrow(x) < 10) {
-    stop("At least 10 samples are required.", call. = FALSE)
+  if (is.null(rownames(x))) {
+    rownames(x) <- paste0("sample_", seq_len(nrow(x)))
   }
-  if (ncol(x) < 20) {
-    stop("At least 20 genes are required.", call. = FALSE)
+  if (is.null(colnames(x))) {
+    colnames(x) <- paste0("gene_", seq_len(ncol(x)))
   }
   x
 }
 
-#' Basic cleaning (Python `clear_data` equivalent)
+#' Clean expression matrix
 #'
-#' @param x Numeric expression matrix (`samples x genes`).
-#' @param fillna If `NULL`, drop genes containing `NA`; otherwise fill `NA`
-#'   with this value.
+#' Removes genes with non-finite values or zero variance.
 #'
-#' @return Cleaned matrix.
+#' @param x Numeric matrix-like object.
+#' @param min_samples Minimum sample count after cleaning.
+#' @return Cleaned numeric matrix.
 #' @export
-clear_data <- function(x, fillna = NULL) {
-  x <- as_expression_matrix(x, require_names = FALSE)
-
-  if (is.null(fillna)) {
-    keep <- colSums(is.na(x)) == 0
-    x <- x[, keep, drop = FALSE]
-  } else {
-    x[is.na(x)] <- fillna
+clear_data <- function(x, min_samples = 10L) {
+  x <- as_expression_matrix(x)
+  finite_gene <- apply(x, 2L, function(v) all(is.finite(v)))
+  x <- x[, finite_gene, drop = FALSE]
+  if (ncol(x) < 2L) {
+    stop("Too few genes after removing non-finite genes.")
   }
-
-  # Remove constant genes.
-  v <- apply(x, 2, stats::var)
-  keep_var <- is.finite(v) & v > 0
-  x[, keep_var, drop = FALSE]
-}
-
-#' Classification error of a vector
-#'
-#' @param x Vector.
-#'
-#' @return Classification error in the range `0` to `1`.
-#' @export
-classification_err <- function(x) {
-  tab <- table(x, useNA = "ifany")
-  1 - max(tab) / length(x)
-}
-
-#' Bootstrap-style filter (Python `bootstrap_filter` equivalent)
-#'
-#' Keeps genes with classification error larger than `threshold`.
-#'
-#' @param x Expression matrix (`samples x genes`).
-#' @param threshold Threshold (default `1 / exp(1)`).
-#'
-#' @return Filtered matrix.
-#' @export
-bootstrap_filter <- function(x, threshold = 1 / exp(1)) {
-  x <- as_expression_matrix(x, require_names = FALSE)
-  errs <- apply(x, 2, classification_err)
-  x[, errs > threshold, drop = FALSE]
+  vars <- apply(x, 2L, stats::var)
+  keep <- is.finite(vars) & vars > 0
+  x <- x[, keep, drop = FALSE]
+  if (ncol(x) < 2L) {
+    stop("Too few genes after removing zero-variance genes.")
+  }
+  if (nrow(x) < as.integer(min_samples)) {
+    stop("Too few samples for analysis.")
+  }
+  x
 }
 
 #' Select top variable genes
 #'
-#' @param x Expression matrix (`samples x genes`).
+#' @param x Numeric matrix-like object.
 #' @param n Number of genes to keep.
-#'
-#' @return Matrix with top variable genes.
+#' @return Matrix with selected genes.
 #' @export
-top_variable_genes <- function(x, n = 1200) {
-  x <- as_expression_matrix(x, require_names = FALSE)
-  if (n >= ncol(x)) {
-    return(x)
-  }
-  vars <- apply(x, 2, stats::var)
-  keep <- names(sort(vars, decreasing = TRUE))[seq_len(n)]
+top_variable_genes <- function(x, n = 2000L) {
+  x <- clear_data(x, min_samples = 2L)
+  n <- min(as.integer(n), ncol(x))
+  vars <- apply(x, 2L, stats::var)
+  keep <- order(vars, decreasing = TRUE)[seq_len(n)]
   x[, keep, drop = FALSE]
 }

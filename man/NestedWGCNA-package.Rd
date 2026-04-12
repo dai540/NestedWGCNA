@@ -6,13 +6,12 @@
 \alias{NestedWGCNA}
 \title{NestedWGCNA}
 \description{
-Two-stage gene co-expression network analysis with coarse-grained and
-fine-grained module discovery.
+Computation-first two-stage gene co-expression analysis with coarse-grained
+and fine-grained module discovery.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://dai540.github.io/NestedWGCNA}
   \item \url{https://github.com/dai540/NestedWGCNA}
   \item Report bugs at \url{https://github.com/dai540/NestedWGCNA/issues}
 }

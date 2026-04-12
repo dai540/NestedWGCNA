@@ -1,11 +1,14 @@
 # NestedWGCNA
 
 [![R-CMD-check](https://github.com/dai540/NestedWGCNA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dai540/NestedWGCNA/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/dai540/NestedWGCNA/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/dai540/NestedWGCNA/actions/workflows/pkgdown.yaml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 `NestedWGCNA` is a computation-first R package for two-stage gene co-expression analysis.
 This release is intentionally minimal: it focuses on network construction, module discovery,
 and nested decomposition only.
+
+Website: https://dai540.github.io/NestedWGCNA/
 
 ## Design policy (v1.00)
 

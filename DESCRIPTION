@@ -9,7 +9,8 @@ Description: Minimal R implementation of a two-stage gene co-expression
     GenFocus normalization, and discovers fine-grained modules (FGMs).
     No visualization or case-study wrappers are included in this release.
 License: MIT + file LICENSE
-URL: https://github.com/dai540/NestedWGCNA
+URL: https://github.com/dai540/NestedWGCNA,
+    https://dai540.github.io/NestedWGCNA/
 BugReports: https://github.com/dai540/NestedWGCNA/issues
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
@@ -21,3 +22,4 @@ Suggests:
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+Config/Needs/website: pkgdown
